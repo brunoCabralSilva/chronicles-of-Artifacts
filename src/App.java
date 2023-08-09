@@ -1,4 +1,4 @@
-import database.ConnectionDB;
+import connection.ConnectionDB;
 
 public class App {
     public static void main(String[] args) throws Exception {
