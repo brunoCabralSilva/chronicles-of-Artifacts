@@ -2,7 +2,7 @@ package weapons;
 
 public class WeaponsService {
   public void getAllWeapons() {
-
+    
   }
 
   public void insertWeapon() {
