@@ -1,4 +1,4 @@
-package model;
+package connection;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -9,9 +9,9 @@ import java.sql.SQLException;
 import java.util.Properties;
 
 public class ConnectionDB {
-  private Connection connect = null;
+  static Connection connect = null;
 
-  public Connection getConnection() throws FileNotFoundException, IOException {
+  public static Connection getConnection() throws FileNotFoundException, IOException {
     if (connect == null) {
       try {
         Properties props = loadProperties();
@@ -23,7 +23,7 @@ public class ConnectionDB {
     } return connect;
   }
 
-  public void closeConnection() {
+  public static void closeConnection() {
     if (connect != null) {
       try {
         connect.close();
