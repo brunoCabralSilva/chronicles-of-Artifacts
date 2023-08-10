@@ -73,7 +73,15 @@ public class ClassesModel {
         "SELECT * FROM chroniclesOfArtifacts.classes"
       );
       while(this.resultSet.next()) {
-        System.out.print(this.resultSet.getString("nameClass") + this.resultSet.getString("functionClass"));
+        System.out.print(
+          "\nClasse: "
+          + this.resultSet.getString("nameClass")
+          + "\nFunção: "
+          + this.resultSet.getString("functionClass")
+          +"\n"
+        );
+
+        //IMPLEMENTAR RETORNO DE UMA LISTA DE MAP (CONJUNTO CHAVE VALOR) DE CADA UM DOS DADOS RETORNADOS
       }
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
@@ -197,6 +205,8 @@ public class ClassesModel {
       this.resultSet = this.prepStatement.getGeneratedKeys();
 
       this.resultSet.next();
+
+      //IMPLEMENTAR REMOÇÃO DE ARMAS E ARMADURAS DA CLASSE EM weaponsClasses e armorsClasses
 
       System.out.println(
         "\nConcluído! A classe "
