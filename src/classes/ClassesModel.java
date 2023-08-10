@@ -153,7 +153,7 @@ public class ClassesModel {
       this.prepStatement = this.connection.prepareStatement(
         "UPDATE chroniclesOfArtifacts.classes "
         + "SET nameClass = ?, functionClass = ? "
-        + "WHERE id = ?",
+        + "WHERE id = ?;",
         Statement.RETURN_GENERATED_KEYS
       );
 

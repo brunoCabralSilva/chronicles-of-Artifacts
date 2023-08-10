@@ -91,7 +91,7 @@ public class WeaponsModel {
     String weapon,
     String categoryWeapon,
     int proficiency,
-    int damage,
+    String damage,
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
@@ -99,7 +99,7 @@ public class WeaponsModel {
     this.connection = ConnectionDB.getConnection();
 
     if (this.getWeaponByName(weapon) != null) {
-      throw new DBException("Arma " + weapon + " já existente na base de dados!");  
+      throw new DBException("Arma " + weapon + " já existente na base de dados!");
     }
 
     try {
@@ -115,7 +115,7 @@ public class WeaponsModel {
       this.prepStatement.setString(1, weapon);
       this.prepStatement.setString(2, categoryWeapon);
       this.prepStatement.setInt(3, proficiency);
-      this.prepStatement.setInt(4, damage);
+      this.prepStatement.setString(4, damage);
       this.prepStatement.setString(5, rangeWeapon);
       this.prepStatement.setInt(6, numberOfHands);
       int rowsAffected = this.prepStatement.executeUpdate();
@@ -152,7 +152,7 @@ public class WeaponsModel {
     String weapon,
     String categoryWeapon,
     int proficiency,
-    int damage,
+    String damage,
     String rangeWeapon,
     int numberOfHands
     ) throws FileNotFoundException, IOException {
@@ -168,14 +168,14 @@ public class WeaponsModel {
       this.prepStatement = this.connection.prepareStatement(
         "UPDATE chroniclesOfArtifacts.weapons "
         + "SET weapon = ?, categoryWeapon = ?, proficiency = ?, damage = ?, rangeWeapon = ?, numberOfHands = ?"
-        + "WHERE id = ?",
+        + " WHERE id = ?",
         Statement.RETURN_GENERATED_KEYS
       );
 
       this.prepStatement.setString(1, weapon);
       this.prepStatement.setString(2, categoryWeapon);
       this.prepStatement.setInt(3, proficiency);
-      this.prepStatement.setInt(4, damage);
+      this.prepStatement.setString(4, damage);
       this.prepStatement.setString(5, rangeWeapon);
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.setInt(7, id);
