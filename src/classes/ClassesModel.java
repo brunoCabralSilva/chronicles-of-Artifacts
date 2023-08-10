@@ -24,7 +24,7 @@ public class ClassesModel {
     this.prepStatement = null;
   }
 
-  public String getClassByNameAndFunction(String nameClass, String functionClass) throws FileNotFoundException, IOException {
+  private String getClassByNameAndFunction(String nameClass, String functionClass) throws FileNotFoundException, IOException {
     try {
       this.statement = this.connection.createStatement();
       this.prepStatement = this.connection.prepareStatement(
@@ -34,6 +34,26 @@ public class ClassesModel {
 
       this.prepStatement.setString(1, nameClass);
       this.prepStatement.setString(2, functionClass);
+      this.resultSet = this.prepStatement.executeQuery();
+
+      if (this.resultSet.next()) {
+        return this.resultSet.getString(2);
+      } return null;
+
+    } catch (SQLException e) {
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  private String getClassById(int id) throws FileNotFoundException, IOException {
+    try {
+      this.statement = this.connection.createStatement();
+      this.prepStatement = this.connection.prepareStatement(
+        "SELECT * FROM chroniclesOfArtifacts.classes "
+        + "WHERE id = ?"
+      );
+
+      this.prepStatement.setInt(1, id);
       this.resultSet = this.prepStatement.executeQuery();
 
       if (this.resultSet.next()) {
@@ -62,7 +82,7 @@ public class ClassesModel {
     }
   }
 
-  public void insertClass(String nameClass, String functionClass) throws FileNotFoundException, IOException {
+  public void insertClass(String nameClass, String functionClass, String[] catArmors, String[] catWeapons) throws FileNotFoundException, IOException {
     
     this.connection = ConnectionDB.getConnection();
 
@@ -98,6 +118,8 @@ public class ClassesModel {
           +".\n"
         );
 
+      //IMPLEMENTAR O REGISTRO DE ARMAS E ARMADURAS DA CLASSE EM weaponsClasses e armorsClasses
+
       this.connection.commit();
 
     } catch (SQLException e) {
@@ -111,13 +133,87 @@ public class ClassesModel {
     }
   };
 
-  public void updateClass() throws FileNotFoundException, IOException {
-    // this.connection.getConnection();
-    // this.connection.closeConnection();
-  }
+  public void updateClass(int id, String nameClass, String functionClass) throws FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
+    if ( this.getClassById(id) == null) {
+      throw new DBException("A Classe de id" + id + " não foi encontrada na base de dados!");  
+    }
 
-  public void removeClass() throws FileNotFoundException, IOException {
-    // this.connection.getConnection();
-    // this.connection.closeConnection();
+    try {
+      this.connection.setAutoCommit(false);
+      
+      this.prepStatement = this.connection.prepareStatement(
+        "UPDATE chroniclesOfArtifacts.classes "
+        + "SET nameClass = ?, functionClass = ? "
+        + "WHERE id = ?",
+        Statement.RETURN_GENERATED_KEYS
+      );
+
+      this.prepStatement.setString(1, nameClass);
+      this.prepStatement.setString(2, functionClass);
+      this.prepStatement.setInt(3, id);
+
+      this.prepStatement.executeUpdate();
+
+      System.out.println(
+        "\nConcluído! Atualização realizada com sucesso!\n"
+      );
+
+      this.connection.commit();
+
+    } catch (SQLException e) {
+      try {
+        this.connection.rollback();
+      } catch(SQLException e2) {
+        throw new DBException("Não foi possível realizar o Rollback");  
+      } throw new DBException(e.getMessage());
+    } finally {
+      ConnectionDB.closeConnection();
+    }
+  };
+
+  public void removeClass(String nameClass, String functionClass) throws FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
+    if ( this.getClassByNameAndFunction(nameClass, functionClass) == null) {
+      throw new DBException("A Classe " + nameClass + " não foi encontrada na base de dados!");  
+    }
+
+    try {
+      this.connection.setAutoCommit(false);
+
+      this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
+      this.prepStatement.executeUpdate();
+      
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.classes "
+        + "WHERE nameClass = ? AND functionClass = ? ",
+        Statement.RETURN_GENERATED_KEYS
+      );
+
+      this.prepStatement.setString(1, nameClass);
+      this.prepStatement.setString(2, functionClass);
+      this.prepStatement.executeUpdate();
+
+      this.resultSet = this.prepStatement.getGeneratedKeys();
+
+      this.resultSet.next();
+
+      System.out.println(
+        "\nConcluído! A classe "
+        + nameClass
+        + " foi removida com sucesso:\n"
+      );
+
+      this.connection.commit();
+
+    } catch (SQLException e) {
+      try {
+        this.connection.rollback();
+      } catch(SQLException e2) {
+        throw new DBException("Não foi possível realizar o Rollback");  
+      } throw new DBException(e.getMessage());
+    } finally {
+      ConnectionDB.closeConnection();
+    }
   }
 }
