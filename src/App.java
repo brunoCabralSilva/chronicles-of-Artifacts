@@ -7,17 +7,13 @@ import weapons.WeaponsService;
 
 public class App {
   public static void main(String[] args) throws Exception {
-    // ClassesModel classesModel = new ClassesModel();
-    // classesModel.getAllClasses();
-
-    // PropertiesModel propertiesModel = new PropertiesModel();
-    // propertiesModel.removeProperty("jegue");
-
-    // WeaponsControl weaponsControl = new WeaponsControl();
+    WeaponsControl weaponsControl = new WeaponsControl();
     // weaponsControl.getAllWeapons();
-    // weaponsControl.removeWeapon("arco grande");
+    // weaponsControl.insertWeapon("Arco Grande",
+    // "à distância superiores", 3, "1d10", "40/50", 2);
+    // weaponsControl.updateWeapon(86, "arco Grande",
+    // "à distância superiores", 3, "1d10", "40/50", 2);
+    weaponsControl.removeWeapon("arco grande");
 
-    // ArmorsModel armorsModel = new ArmorsModel();
-    // armorsModel.removeArmor("mopa");
   }
 }
