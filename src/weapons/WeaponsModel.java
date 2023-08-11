@@ -27,45 +27,49 @@ public class WeaponsModel {
     this.prepStatement = null;
   }
 
-  private String getWeaponByName(String weapon) throws FileNotFoundException, IOException {
+  private void rollbackFunction() {
     try {
-      this.statement = this.connection.createStatement();
-      this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.weapons "
-        + "WHERE weapon = ?"
-      );
-
-      this.prepStatement.setString(1, weapon);
-      this.resultSet = this.prepStatement.executeQuery();
-
-      if (this.resultSet.next()) {
-        return this.resultSet.getString(2);
-      } return null;
-
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
+      this.connection.rollback();
+    } catch(SQLException e2) {
+      throw new DBException("Não foi possível realizar o Rollback");
     }
   }
 
-  private String getWeaponById(int id) throws FileNotFoundException, IOException {
+  public TreeMap<String, String> getWeapon(String weapon, int id) throws FileNotFoundException, IOException {
     try {
+      this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
-      this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.weapons "
-        + "WHERE id = ?"
-      );
+      if (weapon == "") {
+        this.prepStatement = this.connection.prepareStatement(
+        "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?"
+        );
+        this.prepStatement.setInt(1, id);
+      } else {
+        this.prepStatement = this.connection.prepareStatement(
+        "SELECT * FROM chroniclesOfArtifacts.weapons WHERE weapon = ?"
+        );
+        this.prepStatement.setString(1, weapon);
+      }
 
-      this.prepStatement.setInt(1, id);
       this.resultSet = this.prepStatement.executeQuery();
 
-      if (this.resultSet.next()) {
-        return this.resultSet.getString(2);
-      } return null;
 
+      while (this.resultSet.next()) {
+        TreeMap<String, String> weaponMap = new TreeMap<String, String>();
+        weaponMap.put("id", this.resultSet.getString(1));
+        weaponMap.put("weapon", this.resultSet.getString(2));
+        weaponMap.put("categoryWeapon", this.resultSet.getString(3));
+        weaponMap.put("proficiency", this.resultSet.getString(4));
+        weaponMap.put("damage", this.resultSet.getString(5));
+        weaponMap.put("rangeWeapon", this.resultSet.getString(6));
+        weaponMap.put("numberOfHands", this.resultSet.getString(7));
+        return weaponMap;
+      }
+      return null;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
     }
-  }
+  };
 
   public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {
     try {
@@ -74,31 +78,26 @@ public class WeaponsModel {
       this.resultSet = this.statement.executeQuery(
         "SELECT * FROM chroniclesOfArtifacts.weapons"
       );
-      
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
 
       while(this.resultSet.next()) {
-
         TreeMap<String, String> line = new TreeMap<String, String>();
-
+        line.put("id", this.resultSet.getString("id"));
         line.put("weapon", this.resultSet.getString("weapon"));
         line.put("categoryWeapon", this.resultSet.getString("categoryWeapon"));
         line.put("proficiency", this.resultSet.getString("proficiency"));
         line.put("damage", this.resultSet.getString("damage"));
         line.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
         line.put("numberOfHands", this.resultSet.getString("numberOfHands"));
-
         listWeapons.add(line);
       }
       return listWeapons;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
-    } finally {
-      ConnectionDB.closeConnection();
     }
   }
 
-  public void insertWeapon(
+  public boolean insertWeapon(
     String weapon,
     String categoryWeapon,
     int proficiency,
@@ -106,16 +105,9 @@ public class WeaponsModel {
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
-    
-    this.connection = ConnectionDB.getConnection();
-
-    if (this.getWeaponByName(weapon) != null) {
-      throw new DBException("Arma " + weapon + " já existente na base de dados!");
-    }
-
     try {
+      this.connection = ConnectionDB.getConnection();
       this.connection.setAutoCommit(false);
-
       this.prepStatement = this.connection.prepareStatement(
         "INSERT INTO chroniclesOfArtifacts.weapons "
         + "(weapon, categoryWeapon, proficiency, damage, rangeWeapon, numberOfHands) "
@@ -129,36 +121,18 @@ public class WeaponsModel {
       this.prepStatement.setString(4, damage);
       this.prepStatement.setString(5, rangeWeapon);
       this.prepStatement.setInt(6, numberOfHands);
-      int rowsAffected = this.prepStatement.executeUpdate();
-
+      this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
-
-      this.resultSet.next();
-
-      System.out.println(
-          "\nConcluído! Nova arma "
-          + weapon 
-          + " adicionada com sucesso!\nId: "
-          + this.resultSet.getInt(1)
-          + ".\nLinhas afetadas: "
-          + rowsAffected
-          +".\n"
-        );
-
       this.connection.commit();
-
-    } catch (SQLException e) {
-      try {
-        this.connection.rollback();
-      } catch(SQLException e2) {
-        throw new DBException("Não foi possível realizar o Rollback");  
-      } throw new DBException(e.getMessage());
-    } finally {
-      ConnectionDB.closeConnection();
+      return true;
+    }
+    catch (SQLException e) {
+      this.rollbackFunction();
+      throw new DBException(e.getMessage());
     }
   };
 
-  public void updateWeapon(
+  public boolean updateWeapon(
     int id,
     String weapon,
     String categoryWeapon,
@@ -169,10 +143,6 @@ public class WeaponsModel {
     ) throws FileNotFoundException, IOException {
 
     this.connection = ConnectionDB.getConnection();
-    if ( this.getWeaponById(id) == null) {
-      throw new DBException("A arma de id" + id + " não foi encontrada na base de dados!");  
-    }
-
     try {
       this.connection.setAutoCommit(false);
       
@@ -182,7 +152,6 @@ public class WeaponsModel {
         + " WHERE id = ?",
         Statement.RETURN_GENERATED_KEYS
       );
-
       this.prepStatement.setString(1, weapon);
       this.prepStatement.setString(2, categoryWeapon);
       this.prepStatement.setInt(3, proficiency);
@@ -190,35 +159,22 @@ public class WeaponsModel {
       this.prepStatement.setString(5, rangeWeapon);
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.setInt(7, id);
-
       this.prepStatement.executeUpdate();
-
-      System.out.println(
-        "\nConcluído! Atualização realizada com sucesso!\n"
-      );
-
       this.connection.commit();
-
+      return true;
     } catch (SQLException e) {
-      try {
-        this.connection.rollback();
-      } catch(SQLException e2) {
-        throw new DBException("Não foi possível realizar o Rollback");  
-      } throw new DBException(e.getMessage());
-    } finally {
-      ConnectionDB.closeConnection();
-    }
+      this.rollbackFunction();
+      throw new DBException(e.getMessage());
+    } 
   };
 
-  public void removeWeapon(String weapon) throws FileNotFoundException, IOException {
+  public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
-    if ( this.getWeaponByName(weapon) == null) {
+    if ( this.getWeapon(weapon, 0) == null) {
       throw new DBException("A arma " + weapon + " não foi encontrada na base de dados!");  
     }
-
     try {
       this.connection.setAutoCommit(false);
-
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
       this.prepStatement.executeUpdate();
       
@@ -227,30 +183,15 @@ public class WeaponsModel {
         + "WHERE Weapon = ? ",
         Statement.RETURN_GENERATED_KEYS
       );
-
       this.prepStatement.setString(1, weapon);
       this.prepStatement.executeUpdate();
-
       this.resultSet = this.prepStatement.getGeneratedKeys();
-
       this.resultSet.next();
-
-      System.out.println(
-        "\nConcluído! A arma "
-        + weapon
-        + " foi removida com sucesso:\n"
-      );
-
       this.connection.commit();
-
+      return true;
     } catch (SQLException e) {
-      try {
-        this.connection.rollback();
-      } catch(SQLException e2) {
-        throw new DBException("Não foi possível realizar o Rollback");  
-      } throw new DBException(e.getMessage());
-    } finally {
-      ConnectionDB.closeConnection();
+      this.rollbackFunction();
+      throw new DBException(e.getMessage());
     }
   }
 }

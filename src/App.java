@@ -1,6 +1,8 @@
 // import armors.ArmorsModel;
 // import weapons.WeaponsModel;
 
+import weapons.WeaponsControl;
+import weapons.WeaponsModel;
 import weapons.WeaponsService;
 
 public class App {
@@ -11,8 +13,9 @@ public class App {
     // PropertiesModel propertiesModel = new PropertiesModel();
     // propertiesModel.removeProperty("jegue");
 
-    WeaponsService weaponsService = new WeaponsService();
-    weaponsService.getAllWeapons();
+    // WeaponsControl weaponsControl = new WeaponsControl();
+    // weaponsControl.getAllWeapons();
+    // weaponsControl.removeWeapon("arco grande");
 
     // ArmorsModel armorsModel = new ArmorsModel();
     // armorsModel.removeArmor("mopa");
