@@ -1,6 +1,8 @@
 // import armors.ArmorsModel;
 // import weapons.WeaponsModel;
 
+import weapons.WeaponsService;
+
 public class App {
   public static void main(String[] args) throws Exception {
     // ClassesModel classesModel = new ClassesModel();
@@ -9,8 +11,8 @@ public class App {
     // PropertiesModel propertiesModel = new PropertiesModel();
     // propertiesModel.removeProperty("jegue");
 
-    // WeaponsModel weaponsModel = new WeaponsModel();
-    // weaponsModel.removeWeapon("W");
+    WeaponsService weaponsService = new WeaponsService();
+    weaponsService.getAllWeapons();
 
     // ArmorsModel armorsModel = new ArmorsModel();
     // armorsModel.removeArmor("mopa");

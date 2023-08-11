@@ -7,15 +7,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
 
 public class WeaponsModel {
-  Connection connection;
-  Statement statement;
-  ResultSet resultSet;
-  PreparedStatement prepStatement;
+  private Connection connection;
+  private Statement statement;
+  private ResultSet resultSet;
+  private PreparedStatement prepStatement;
 
   public WeaponsModel() {
     this.connection = null;
@@ -64,22 +67,30 @@ public class WeaponsModel {
     }
   }
 
-  public void getAllWeapons() throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
       this.resultSet = this.statement.executeQuery(
         "SELECT * FROM chroniclesOfArtifacts.weapons"
       );
+      
+      ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
+
       while(this.resultSet.next()) {
-        System.out.print(
-          "\n"
-          + this.resultSet.getString("weapon")
-          +"\n"
-        );
-        
-        //IMPLEMENTAR RETORNO DE UMA LISTA DE MAP (CONJUNTO CHAVE VALOR) DE CADA UM DOS DADOS RETORNADOS
+
+        TreeMap<String, String> line = new TreeMap<String, String>();
+
+        line.put("weapon", this.resultSet.getString("weapon"));
+        line.put("categoryWeapon", this.resultSet.getString("categoryWeapon"));
+        line.put("proficiency", this.resultSet.getString("proficiency"));
+        line.put("damage", this.resultSet.getString("damage"));
+        line.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
+        line.put("numberOfHands", this.resultSet.getString("numberOfHands"));
+
+        listWeapons.add(line);
       }
+      return listWeapons;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
     } finally {
