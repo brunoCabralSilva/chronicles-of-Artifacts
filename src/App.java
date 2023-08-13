@@ -24,13 +24,15 @@ public class App {
   public static void main(String[] args) throws Exception {
     ArrayList<String> properties = new ArrayList<String>();
     properties.add("alcance");
-    properties.add("mão inábil");
-    properties.add("mão hábil");
+    properties.add("mão de boas");
+    properties.add("mão ok");
     WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    // weaponsControl.getAllWeapons();
-    // weaponsControl.insertWeapon("Arco Grande",
-    // "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    weaponsControl.removeWeapon("ARCO GRANDE");
+    // weaponsControl.getWeapons();
+    weaponsControl.insertWeapon("Arco Grande",
+    "à distância superiores", 3, "1d10", "40/50", 2, properties);
+    // weaponsControl.updateWeapon(121, "Arco mais ou menos",
+    // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
+    // weaponsControl.removeWeapon("ARCO GRANDE");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();

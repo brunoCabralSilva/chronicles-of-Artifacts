@@ -15,7 +15,7 @@ public class WeaponsService {
     this.weaponsModel = weaponsModel;
   }
 
-  public ArrayList<Map<String, Object>> getAllWeapons() throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> getWeapons() throws FileNotFoundException, IOException {
     return this.weaponsModel.getWeapons("all");
   }
 

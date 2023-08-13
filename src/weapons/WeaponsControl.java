@@ -50,8 +50,8 @@ public class WeaponsControl {
     }
   }
 
-  public void getAllWeapons() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, Object>> allWeapons = this.weaponsService.getAllWeapons();
+  public void getWeapons() throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allWeapons = this.weaponsService.getWeapons();
     if (allWeapons.size() == 0 ) {
       System.out.println("\nNão foram encontradas Armas registradas no banco de dados!\n");
     } else {

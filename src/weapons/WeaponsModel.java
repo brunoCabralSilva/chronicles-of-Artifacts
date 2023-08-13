@@ -51,7 +51,7 @@ public class WeaponsModel {
       this.connection.setAutoCommit(false);
       for (String property : listProperties) {
         TreeMap<String, Object> propertyId = propertiesModel.getProperty(property);
-        if ((int) propertyId.get("id") <= 0) {
+        if (Integer.parseInt((String) propertyId.get("id")) <= 0) {
           propertyId = new TreeMap<String, Object>();
           propertyId.put("id", propertiesModel.insertProperty(property));
         }
@@ -59,16 +59,16 @@ public class WeaponsModel {
           "SELECT * FROM chroniclesOfArtifacts.weaponProperties "
           + "WHERE propertyId = ? AND weaponId = ?"
         );
-        this.prepStatement.setInt(1, (int)(propertyId.get("id")));
-        this.prepStatement.setInt(2, (int) weaponId);
+        this.prepStatement.setInt(1, Integer.parseInt((String) propertyId.get("id")));
+        this.prepStatement.setInt(2, weaponId);
         this.resultSet = this.prepStatement.executeQuery();
 
         if (!this.resultSet.next()) {
           this.prepStatement = this.connection.prepareStatement(
             "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
           );
-          this.prepStatement.setInt(1, (int)(propertyId.get("id")));
-          this.prepStatement.setInt(2, (int) weaponId);
+          this.prepStatement.setInt(1, Integer.parseInt((String)propertyId.get("id")));
+          this.prepStatement.setInt(2, weaponId);
           this.prepStatement.executeUpdate();
         }
       }
@@ -91,10 +91,10 @@ public class WeaponsModel {
         query = "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?";
       }
       this.prepStatement = this.connection.prepareStatement(query);
-      
+
       if (data instanceof Integer) {
         this.prepStatement.setInt(1, (Integer) data);
-      } else if (data instanceof String) {
+      } else if (data instanceof String && data != "all") {
         this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
       this.resultSet = this.prepStatement.executeQuery();
@@ -148,7 +148,7 @@ public class WeaponsModel {
         generatedId = this.resultSet.getInt(1);
       }
       if (properties.size() > 0 && generatedId > 0) {
-        this.addProperties((int) generatedId, properties);
+        this.addProperties(generatedId, properties);
       }
       this.connection.commit();
       return generatedId;
@@ -189,6 +189,7 @@ public class WeaponsModel {
       if (properties.size() != 0) {
         if (override) {
           this.removeCatProp(id);
+          this.addProperties(id, properties);
         } else {
           this.addProperties(id, properties);
         }
