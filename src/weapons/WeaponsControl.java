@@ -8,12 +8,12 @@ import java.util.Map;
 public class WeaponsControl {
   WeaponsService weaponsService = null;
 
-  public WeaponsControl() {
-    this.weaponsService = new WeaponsService();
+  public WeaponsControl(WeaponsService weaponsService) {
+    this.weaponsService = weaponsService;
   }
 
   public String firstLetterUp(String word) {
-  return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+    return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
   }
   
   private void returnWeapons(ArrayList<Map<String, String>> listWeapons) {

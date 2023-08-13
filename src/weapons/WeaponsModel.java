@@ -27,14 +27,6 @@ public class WeaponsModel {
     this.prepStatement = null;
   }
 
-  private void rollbackFunction() {
-    try {
-      this.connection.rollback();
-    } catch(SQLException e2) {
-      throw new DBException("Não foi possível realizar o Rollback");
-    }
-  }
-
   public TreeMap<String, String> getWeapon(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
@@ -122,7 +114,7 @@ public class WeaponsModel {
       return true;
     }
     catch (SQLException e) {
-      this.rollbackFunction();
+      ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
     }
   };
@@ -156,7 +148,7 @@ public class WeaponsModel {
       this.connection.commit();
       return true;
     } catch (SQLException e) {
-      this.rollbackFunction();
+      ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
     } 
   };
@@ -170,7 +162,7 @@ public class WeaponsModel {
       
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "
-        + "WHERE Weapon = ? ",
+        + "WHERE weapon = ? ",
         Statement.RETURN_GENERATED_KEYS
       );
       this.prepStatement.setString(1, weapon.toLowerCase());
@@ -180,7 +172,7 @@ public class WeaponsModel {
       this.connection.commit();
       return true;
     } catch (SQLException e) {
-      this.rollbackFunction();
+      ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
     }
   }

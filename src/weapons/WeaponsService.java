@@ -12,8 +12,8 @@ import connection.DBException;
 public class WeaponsService {
   WeaponsModel weaponsModel = null;
 
-  public WeaponsService() {
-    this.weaponsModel = new WeaponsModel();
+  public WeaponsService(WeaponsModel weaponsModel) {
+    this.weaponsModel = weaponsModel;
   }
 
   public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {

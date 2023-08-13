@@ -42,4 +42,12 @@ public class ConnectionDB {
       throw new DBException(e.getMessage());
     }
   }
+
+  public static void rollbackFunction(Connection connection) {
+    try {
+      connection.rollback();
+    } catch(SQLException e2) {
+      throw new DBException("Não foi possível realizar o Rollback");
+    }
+  }
 }
