@@ -27,9 +27,10 @@ public class App {
     properties.add("mão inábil");
     properties.add("mão hábil");
     WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    weaponsControl.getAllWeapons();
+    // weaponsControl.getAllWeapons();
     // weaponsControl.insertWeapon("Arco Grande",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties);
+    weaponsControl.removeWeapon("ARCO GRANDE");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();

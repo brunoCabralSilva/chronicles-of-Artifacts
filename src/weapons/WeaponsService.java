@@ -58,7 +58,9 @@ public class WeaponsService {
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties,
+    boolean override
   ) throws FileNotFoundException, IOException {
     ArrayList<Map<String,Object>> item = this.weaponsModel.getWeapons(id);
     if ( item == null) {
@@ -71,8 +73,17 @@ public class WeaponsService {
       proficiency,
       damage,
       rangeWeapon,
-      numberOfHands
+      numberOfHands,
+      properties
     );
+    if (properties.size() != 0) {
+      if (override) {
+        //apagar todos os existentes e criar novos
+      } else {
+        //consultar se algum dos valores repassados já existem
+        //se não, adicionar
+      }
+    }
     if (updateWeapon) {
       ArrayList<Map<String,Object>> updatedWeapon = this.weaponsModel.getWeapons(weapon);
       return updatedWeapon;
@@ -86,7 +97,7 @@ public class WeaponsService {
     if ( item == null) {
       return false;
     }
-    if (this.weaponsModel.removeWeapon(weapon)){
+    if (this.weaponsModel.removeWeapon(weapon, item)){
       ArrayList<Map<String,Object>> itemRemoved = this.weaponsModel.getWeapons(weapon);
       if (itemRemoved.size() == 0) {
         return true;

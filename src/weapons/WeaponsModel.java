@@ -151,7 +151,8 @@ public class WeaponsModel {
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties
     ) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
@@ -178,19 +179,24 @@ public class WeaponsModel {
     } 
   };
 
-  public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
+  public boolean removeWeapon(String weapon,ArrayList<Map<String,Object>> item) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
       this.prepStatement.executeUpdate();
-      
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.weaponProperties "
+        + "WHERE weaponId = ?"
+      );
+      this.prepStatement.setInt(1, (int) item.get(0).get("id"));
+      this.prepStatement.executeUpdate();
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "
         + "WHERE weapon = ? ",
         Statement.RETURN_GENERATED_KEYS
       );
-      this.prepStatement.setString(1, weapon.toLowerCase());
+      this.prepStatement.setString(1, weapon);
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
       this.resultSet.next();

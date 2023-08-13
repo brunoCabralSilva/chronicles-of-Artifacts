@@ -101,7 +101,9 @@ public class WeaponsControl {
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties,
+    boolean override
   ) throws FileNotFoundException, IOException {
     ArrayList<Map<String, Object>> updatedWeapon = this.weaponsService.updateWeapon(
       id,
@@ -110,7 +112,9 @@ public class WeaponsControl {
       proficiency,
       damage,
       rangeWeapon,
-      numberOfHands
+      numberOfHands,
+      properties,
+      override
     );
     if (updatedWeapon.size() == 0) { 
       System.out.println("\nA arma de id " + id + " não foi encontrada na base de dados!\n");
