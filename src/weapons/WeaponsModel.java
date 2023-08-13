@@ -35,25 +35,22 @@ public class WeaponsModel {
     }
   }
 
-  public TreeMap<String, String> getWeapon(String weapon, int id) throws FileNotFoundException, IOException {
+  public TreeMap<String, String> getWeapon(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
-      if (weapon == "") {
+      if (!data.getClass().getSimpleName().equals("String")) {
         this.prepStatement = this.connection.prepareStatement(
         "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?"
         );
-        this.prepStatement.setInt(1, id);
+        this.prepStatement.setInt(1, (Integer) data);
       } else {
         this.prepStatement = this.connection.prepareStatement(
         "SELECT * FROM chroniclesOfArtifacts.weapons WHERE weapon = ?"
         );
-        this.prepStatement.setString(1, weapon);
+        this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
-
       this.resultSet = this.prepStatement.executeQuery();
-
-
       while (this.resultSet.next()) {
         TreeMap<String, String> weaponMap = new TreeMap<String, String>();
         weaponMap.put("id", this.resultSet.getString(1));
@@ -79,7 +76,6 @@ public class WeaponsModel {
         "SELECT * FROM chroniclesOfArtifacts.weapons"
       );
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
-
       while(this.resultSet.next()) {
         TreeMap<String, String> line = new TreeMap<String, String>();
         line.put("id", this.resultSet.getString("id"));
@@ -114,12 +110,11 @@ public class WeaponsModel {
         + "VALUES (?, ?, ?, ?, ?, ?)",
         Statement.RETURN_GENERATED_KEYS
       );
-
-      this.prepStatement.setString(1, weapon);
-      this.prepStatement.setString(2, categoryWeapon);
+      this.prepStatement.setString(1, weapon.toLowerCase());
+      this.prepStatement.setString(2, categoryWeapon.toLowerCase());
       this.prepStatement.setInt(3, proficiency);
-      this.prepStatement.setString(4, damage);
-      this.prepStatement.setString(5, rangeWeapon);
+      this.prepStatement.setString(4, damage.toLowerCase());
+      this.prepStatement.setString(5, rangeWeapon.toLowerCase());
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
@@ -141,22 +136,20 @@ public class WeaponsModel {
     String rangeWeapon,
     int numberOfHands
     ) throws FileNotFoundException, IOException {
-
     this.connection = ConnectionDB.getConnection();
     try {
-      this.connection.setAutoCommit(false);
-      
+      this.connection.setAutoCommit(false); 
       this.prepStatement = this.connection.prepareStatement(
         "UPDATE chroniclesOfArtifacts.weapons "
         + "SET weapon = ?, categoryWeapon = ?, proficiency = ?, damage = ?, rangeWeapon = ?, numberOfHands = ?"
         + " WHERE id = ?",
         Statement.RETURN_GENERATED_KEYS
       );
-      this.prepStatement.setString(1, weapon);
-      this.prepStatement.setString(2, categoryWeapon);
+      this.prepStatement.setString(1, weapon.toLowerCase());
+      this.prepStatement.setString(2, categoryWeapon.toLowerCase());
       this.prepStatement.setInt(3, proficiency);
-      this.prepStatement.setString(4, damage);
-      this.prepStatement.setString(5, rangeWeapon);
+      this.prepStatement.setString(4, damage.toLowerCase());
+      this.prepStatement.setString(5, rangeWeapon.toLowerCase());
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.setInt(7, id);
       this.prepStatement.executeUpdate();
@@ -170,9 +163,6 @@ public class WeaponsModel {
 
   public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
-    if ( this.getWeapon(weapon, 0) == null) {
-      throw new DBException("A arma " + weapon + " não foi encontrada na base de dados!");  
-    }
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
@@ -183,7 +173,7 @@ public class WeaponsModel {
         + "WHERE Weapon = ? ",
         Statement.RETURN_GENERATED_KEYS
       );
-      this.prepStatement.setString(1, weapon);
+      this.prepStatement.setString(1, weapon.toLowerCase());
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
       this.resultSet.next();

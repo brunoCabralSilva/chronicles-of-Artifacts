@@ -16,37 +16,11 @@ public class WeaponsService {
     this.weaponsModel = new WeaponsModel();
   }
 
-  private void returnWeapons(ArrayList<Map<String, String>> allWeapons) {
-    int i = 0;
-    while(i < allWeapons.size()) {
-        System.out.println(
-          "\n"
-          + "ID: "
-          + allWeapons.get(i).get("id")
-          + "\nArma: "
-          + allWeapons.get(i).get("weapon")
-          + "\nCategoria: "
-          + allWeapons.get(i).get("categoryWeapon")
-          + "\nProficiência: "
-          + allWeapons.get(i).get("proficiency")
-          + "\nDano: "
-          + allWeapons.get(i).get("damage")
-          + "\nAlcance: "
-          + allWeapons.get(i).get("rangeWeapon")
-          + "\nNúmero de mãos utilizadas: "
-          + allWeapons.get(i).get("numberOfHands")
-          + "\n"
-        );
-      i += 1;
-    }
+  public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {
+    return this.weaponsModel.getAllWeapons();
   }
 
-  public void getAllWeapons() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> allWeapons = this.weaponsModel.getAllWeapons();
-    this.returnWeapons(allWeapons);
-  }
-
-  public void insertWeapon(
+  public ArrayList<Map<String, String>> insertWeapon(
     String weapon,
     String categoryWeapon,
     int proficiency,
@@ -55,10 +29,10 @@ public class WeaponsService {
     int numberOfHands
   ) throws FileNotFoundException, IOException {
     
-    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon, 0);
+    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
 
     if (item != null) {
-      throw new DBException("Arma " + weapon + " já existente na base de dados!");
+      return new ArrayList<Map<String, String>>();
     } 
     boolean registerWeapon = this.weaponsModel.insertWeapon(
       weapon,
@@ -70,16 +44,16 @@ public class WeaponsService {
     );
 
     if (registerWeapon) {
-      TreeMap<String, String> registeredWeapon = this.weaponsModel.getWeapon(weapon, 0);
+      TreeMap<String, String> registeredWeapon = this.weaponsModel.getWeapon(weapon);
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
       listWeapons.add(registeredWeapon);
-      System.out.println("\nArma adicionada com sucesso!");
-      this.returnWeapons(listWeapons);
+      return listWeapons;
     }
     ConnectionDB.closeConnection();
+    throw new DBException("Ocorreu um erro ao tentar inserir a arma " + weapon + ". Por favor, tente novamente.");
   };
 
-  public void updateWeapon(
+  public ArrayList<Map<String, String>> updateWeapon(
     int id,
     String weapon,
     String categoryWeapon,
@@ -89,10 +63,10 @@ public class WeaponsService {
     int numberOfHands
   ) throws FileNotFoundException, IOException {
 
-    TreeMap<String, String> item = this.weaponsModel.getWeapon("", id);
+    TreeMap<String, String> item = this.weaponsModel.getWeapon(id);
     
     if ( item == null) {
-      throw new DBException("A arma de id" + id + " não foi encontrada na base de dados!");  
+      return new ArrayList<Map<String, String>>();
     }
 
     boolean updateWeapon = this.weaponsModel.updateWeapon(
@@ -106,30 +80,28 @@ public class WeaponsService {
     );
 
     if (updateWeapon) {
-      TreeMap<String, String> updatedWeapon = this.weaponsModel.getWeapon(weapon, 0);
+      TreeMap<String, String> updatedWeapon = this.weaponsModel.getWeapon(weapon);
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
       listWeapons.add(updatedWeapon);
-      System.out.println("\nArma atualizada com sucesso!");
-      this.returnWeapons(listWeapons);
+      return listWeapons;
     }
     ConnectionDB.closeConnection();
+    throw new DBException("Ocorreu um erro ao tentar atualizar a arma de id " + id + ". Por favor, tente novamente.");
   }
 
-  public void removeWeapon(String weapon) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon, 0);
+  public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
+    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
     
     if ( item == null) {
-      throw new DBException("A arma " + weapon + " não foi encontrada na base de dados!");  
+      return false;
     }
 
     if (this.weaponsModel.removeWeapon(weapon)){
-      TreeMap<String, String> itemRemoved = this.weaponsModel.getWeapon(weapon, 0);
-
+      TreeMap<String, String> itemRemoved = this.weaponsModel.getWeapon(weapon);
       if (itemRemoved == null) {
-        System.out.println("A arma " + weapon + "  foi removida com sucesso");
-      } else {
-        throw new DBException("Ocorreu um erro ao tentar remover a arma  " + weapon + ". Por favor, tente novamente");  
+        return true;
       }
     }
+    throw new DBException("Ocorreu um erro ao tentar remover a arma  " + weapon + ". Por favor, tente novamente"); 
   }
 }
