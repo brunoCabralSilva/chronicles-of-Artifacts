@@ -32,22 +32,20 @@ public class WeaponsService {
     if (item.size() != 0) {
       return new ArrayList<Map<String, Object>>();
     } 
-    int registerWeapon = this.weaponsModel.insertWeapon(
+    this.weaponsModel.insertWeapon(
       weapon,
       categoryWeapon,
       proficiency,
       damage,
       rangeWeapon,
-      numberOfHands
+      numberOfHands,
+      properties
     );
-    if (registerWeapon > 0) {
-      if (properties.size() > 0) {
-        this.weaponsModel.addProperties((int) registerWeapon, properties);
-      }
-      ArrayList<Map<String,Object>> registeredWeapon = this.weaponsModel.getWeapons(weapon);
+    ArrayList<Map<String,Object>> registeredWeapon = this.weaponsModel.getWeapons(weapon);
+    ConnectionDB.closeConnection();
+    if (registeredWeapon.size() > 0) {
       return registeredWeapon;
     }
-    ConnectionDB.closeConnection();
     throw new DBException("Ocorreu um erro ao tentar inserir a arma " + weapon + ". Por favor, tente novamente.");
   };
 
@@ -74,16 +72,9 @@ public class WeaponsService {
       damage,
       rangeWeapon,
       numberOfHands,
-      properties
+      properties,
+      override
     );
-    if (properties.size() != 0) {
-      if (override) {
-        //apagar todos os existentes e criar novos
-      } else {
-        //consultar se algum dos valores repassados já existem
-        //se não, adicionar
-      }
-    }
     if (updateWeapon) {
       ArrayList<Map<String,Object>> updatedWeapon = this.weaponsModel.getWeapons(weapon);
       return updatedWeapon;

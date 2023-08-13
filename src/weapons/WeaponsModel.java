@@ -56,11 +56,21 @@ public class WeaponsModel {
           propertyId.put("id", propertiesModel.insertProperty(property));
         }
         this.prepStatement = this.connection.prepareStatement(
-          "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
+          "SELECT * FROM chroniclesOfArtifacts.weaponProperties "
+          + "WHERE propertyId = ? AND weaponId = ?"
         );
         this.prepStatement.setInt(1, (int)(propertyId.get("id")));
         this.prepStatement.setInt(2, (int) weaponId);
-        this.prepStatement.executeUpdate();
+        this.resultSet = this.prepStatement.executeQuery();
+
+        if (!this.resultSet.next()) {
+          this.prepStatement = this.connection.prepareStatement(
+            "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
+          );
+          this.prepStatement.setInt(1, (int)(propertyId.get("id")));
+          this.prepStatement.setInt(2, (int) weaponId);
+          this.prepStatement.executeUpdate();
+        }
       }
       this.connection.commit();
     } catch (SQLException e) {
@@ -113,7 +123,8 @@ public class WeaponsModel {
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties
   ) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
@@ -136,6 +147,9 @@ public class WeaponsModel {
       if (this.resultSet.next()) {
         generatedId = this.resultSet.getInt(1);
       }
+      if (properties.size() > 0 && generatedId > 0) {
+        this.addProperties((int) generatedId, properties);
+      }
       this.connection.commit();
       return generatedId;
     } catch (SQLException e) {
@@ -152,7 +166,8 @@ public class WeaponsModel {
     String damage,
     String rangeWeapon,
     int numberOfHands,
-    ArrayList<String> properties
+    ArrayList<String> properties,
+    boolean override
     ) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
@@ -171,6 +186,13 @@ public class WeaponsModel {
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.setInt(7, id);
       this.prepStatement.executeUpdate();
+      if (properties.size() != 0) {
+        if (override) {
+          this.removeCatProp(id);
+        } else {
+          this.addProperties(id, properties);
+        }
+      }
       this.connection.commit();
       return true;
     } catch (SQLException e) {
@@ -184,13 +206,7 @@ public class WeaponsModel {
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      this.prepStatement.executeUpdate();
-      this.prepStatement = this.connection.prepareStatement(
-        "DELETE FROM chroniclesOfArtifacts.weaponProperties "
-        + "WHERE weaponId = ?"
-      );
-      this.prepStatement.setInt(1, (int) item.get(0).get("id"));
-      this.prepStatement.executeUpdate();
+      this.removeCatProp((int) item.get(0).get("id"));
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "
         + "WHERE weapon = ? ",
@@ -202,6 +218,23 @@ public class WeaponsModel {
       this.resultSet.next();
       this.connection.commit();
       return true;
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  public void removeCatProp(int id) throws FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
+    try {
+      this.connection.setAutoCommit(false);
+      this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
+      this.prepStatement.executeUpdate();
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.weaponProperties "
+        + "WHERE weaponId = ?"
+      );
+      this.connection.commit();
     } catch (SQLException e) {
       ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
