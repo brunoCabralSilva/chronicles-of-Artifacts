@@ -28,9 +28,7 @@ public class WeaponsService {
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
-    
     TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
-
     if (item != null) {
       return new ArrayList<Map<String, String>>();
     } 
@@ -42,7 +40,6 @@ public class WeaponsService {
       rangeWeapon,
       numberOfHands
     );
-
     if (registerWeapon) {
       TreeMap<String, String> registeredWeapon = this.weaponsModel.getWeapon(weapon);
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
@@ -62,13 +59,10 @@ public class WeaponsService {
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
-
     TreeMap<String, String> item = this.weaponsModel.getWeapon(id);
-    
     if ( item == null) {
       return new ArrayList<Map<String, String>>();
     }
-
     boolean updateWeapon = this.weaponsModel.updateWeapon(
       id,
       weapon,
@@ -78,7 +72,6 @@ public class WeaponsService {
       rangeWeapon,
       numberOfHands
     );
-
     if (updateWeapon) {
       TreeMap<String, String> updatedWeapon = this.weaponsModel.getWeapon(weapon);
       ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
@@ -91,11 +84,9 @@ public class WeaponsService {
 
   public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
     TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
-    
     if ( item == null) {
       return false;
     }
-
     if (this.weaponsModel.removeWeapon(weapon)){
       TreeMap<String, String> itemRemoved = this.weaponsModel.getWeapon(weapon);
       if (itemRemoved == null) {

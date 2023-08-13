@@ -14,8 +14,18 @@
 // import armors.ArmorsModel;
 // import armors.ArmorsService;
 
+import categoryArmors.CatArmorsControl;
+import categoryArmors.CatArmorsModel;
+import categoryArmors.CatArmorsService;
+
 public class App {
   public static void main(String[] args) throws Exception {
+
+    // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
+    // catArmorsControl.getAllCatArmors();
+    // catArmorsControl.insertCatArmor("Plantas", "leve");
+    // catArmorsControl.updateCatArmor(8, "Raízes", "leve");
+    // catArmorsControl.removeCatArmor("Raízes");
 
     // ArmorsControl armorsControl = new ArmorsControl(new ArmorsService(new ArmorsModel()));
     // armorsControl.getAllArmors();
