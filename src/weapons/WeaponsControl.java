@@ -16,34 +16,42 @@ public class WeaponsControl {
     return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
   }
   
-  private void returnWeapons(ArrayList<Map<String, String>> listWeapons) {
+  private void returnWeapons(ArrayList<Map<String, Object>> listWeapons) {
     int i = 0;
-    
     while(i < listWeapons.size()) {
-        System.out.println(
-          "\n"
-          + "ID: "
-          + listWeapons.get(i).get("id")
-          + "\nArma: "
-          + this.firstLetterUp(listWeapons.get(i).get("weapon"))
-          + "\nCategoria: "
-          + this.firstLetterUp(listWeapons.get(i).get("categoryWeapon"))
-          + "\nProficiência: "
-          + listWeapons.get(i).get("proficiency")
-          + "\nDano: "
-          + this.firstLetterUp(listWeapons.get(i).get("damage"))
-          + "\nAlcance: "
-          + this.firstLetterUp(listWeapons.get(i).get("rangeWeapon"))
-          + "\nNúmero de mãos utilizadas: "
-          + listWeapons.get(i).get("numberOfHands")
-          + "\n"
-        );
+      ArrayList<?> rawProperties = (ArrayList<?>) listWeapons.get(i).get("properties");
+      ArrayList<String> properties = new ArrayList<>();
+      for (Object item : rawProperties) {
+        if (item instanceof String) {
+            properties.add((String) item);
+        }
+      }
+      System.out.println(
+        "\n"
+        + "ID: "
+        + listWeapons.get(i).get("id")
+        + "\nArma: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("weapon"))
+        + "\nCategoria: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("categoryWeapon"))
+        + "\nProficiência: "
+        + listWeapons.get(i).get("proficiency")
+        + "\nDano: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("damage"))
+        + "\nAlcance: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("rangeWeapon"))
+        + "\nNúmero de mãos utilizadas: "
+        + listWeapons.get(i).get("numberOfHands")
+        + "\n"
+        + "Propriedades: "
+        + properties
+      );
       i += 1;
     }
   }
 
   public void getAllWeapons() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> allWeapons = this.weaponsService.getAllWeapons();
+    ArrayList<Map<String, Object>> allWeapons = this.weaponsService.getAllWeapons();
     if (allWeapons.size() == 0 ) {
       System.out.println("\nNão foram encontradas Armas registradas no banco de dados!\n");
     } else {
@@ -57,15 +65,17 @@ public class WeaponsControl {
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> insertedWeapon = this.weaponsService.insertWeapon(
+    ArrayList<Map<String, Object>> insertedWeapon = this.weaponsService.insertWeapon(
       weapon,
       categoryWeapon,
       proficiency,
       damage,
       rangeWeapon,
-      numberOfHands
+      numberOfHands,
+      properties
     );
 
     if (insertedWeapon.size() == 0) {
@@ -93,7 +103,7 @@ public class WeaponsControl {
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> updatedWeapon = this.weaponsService.updateWeapon(
+    ArrayList<Map<String, Object>> updatedWeapon = this.weaponsService.updateWeapon(
       id,
       weapon,
       categoryWeapon,

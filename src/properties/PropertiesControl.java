@@ -12,11 +12,11 @@ public class PropertiesControl {
     this.propertiesService = propertiesService;
   }
 
-  public String firstLetterUp(String word) {
-    return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
+  public String firstLetterUp(Object object) {
+    return ((String) object).substring(0, 1).toUpperCase() + ((String) object).substring(1).toLowerCase();
   }
   
-  private void returnProperties(ArrayList<Map<String, String>> listProps) {
+  private void returnProperties(ArrayList<Map<String, Object>> listProps) {
     int i = 0;
     while(i < listProps.size()) {
         System.out.println(
@@ -32,7 +32,7 @@ public class PropertiesControl {
   }
 
   public void getAllProperties() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> allProperties = this.propertiesService.getAllProperties();
+    ArrayList<Map<String, Object>> allProperties = this.propertiesService.getAllProperties();
     if (allProperties.size() == 0 ) {
       System.out.println("\nNão foram encontradas Propriedades registradas no banco de dados!\n");
     } else {
@@ -41,7 +41,7 @@ public class PropertiesControl {
   }
 
   public void insertProperty(String property) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> insertedProp = this.propertiesService.insertProperty(property);
+    ArrayList<Map<String, Object>> insertedProp = this.propertiesService.insertProperty(property);
     if (insertedProp.size() == 0) {
       System.out.println(
         "\nPropriedade "
@@ -59,7 +59,7 @@ public class PropertiesControl {
   };
 
   public void updateProperty(int id, String property) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> updatedProp = this.propertiesService.updateProperty(id, property);
+    ArrayList<Map<String, Object>> updatedProp = this.propertiesService.updateProperty(id, property);
     if (updatedProp.size() == 0) { 
       System.out.println("\nA propriedade de id " + id + " não foi encontrada na base de dados!\n");
     } else {

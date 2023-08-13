@@ -4,7 +4,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
@@ -16,23 +15,24 @@ public class WeaponsService {
     this.weaponsModel = weaponsModel;
   }
 
-  public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {
-    return this.weaponsModel.getAllWeapons();
+  public ArrayList<Map<String, Object>> getAllWeapons() throws FileNotFoundException, IOException {
+    return this.weaponsModel.getWeapons("all");
   }
 
-  public ArrayList<Map<String, String>> insertWeapon(
+  public ArrayList<Map<String, Object>> insertWeapon(
     String weapon,
     String categoryWeapon,
     int proficiency,
     String damage,
     String rangeWeapon,
-    int numberOfHands
+    int numberOfHands,
+    ArrayList<String> properties
   ) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
-    if (item != null) {
-      return new ArrayList<Map<String, String>>();
+    ArrayList<Map<String,Object>> item = this.weaponsModel.getWeapons(weapon);
+    if (item.size() != 0) {
+      return new ArrayList<Map<String, Object>>();
     } 
-    boolean registerWeapon = this.weaponsModel.insertWeapon(
+    int registerWeapon = this.weaponsModel.insertWeapon(
       weapon,
       categoryWeapon,
       proficiency,
@@ -40,17 +40,18 @@ public class WeaponsService {
       rangeWeapon,
       numberOfHands
     );
-    if (registerWeapon) {
-      TreeMap<String, String> registeredWeapon = this.weaponsModel.getWeapon(weapon);
-      ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
-      listWeapons.add(registeredWeapon);
-      return listWeapons;
+    if (registerWeapon > 0) {
+      if (properties.size() > 0) {
+        this.weaponsModel.addProperties((int) registerWeapon, properties);
+      }
+      ArrayList<Map<String,Object>> registeredWeapon = this.weaponsModel.getWeapons(weapon);
+      return registeredWeapon;
     }
     ConnectionDB.closeConnection();
     throw new DBException("Ocorreu um erro ao tentar inserir a arma " + weapon + ". Por favor, tente novamente.");
   };
 
-  public ArrayList<Map<String, String>> updateWeapon(
+  public ArrayList<Map<String, Object>> updateWeapon(
     int id,
     String weapon,
     String categoryWeapon,
@@ -59,9 +60,9 @@ public class WeaponsService {
     String rangeWeapon,
     int numberOfHands
   ) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.weaponsModel.getWeapon(id);
+    ArrayList<Map<String,Object>> item = this.weaponsModel.getWeapons(id);
     if ( item == null) {
-      return new ArrayList<Map<String, String>>();
+      return new ArrayList<Map<String, Object>>();
     }
     boolean updateWeapon = this.weaponsModel.updateWeapon(
       id,
@@ -73,23 +74,21 @@ public class WeaponsService {
       numberOfHands
     );
     if (updateWeapon) {
-      TreeMap<String, String> updatedWeapon = this.weaponsModel.getWeapon(weapon);
-      ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
-      listWeapons.add(updatedWeapon);
-      return listWeapons;
+      ArrayList<Map<String,Object>> updatedWeapon = this.weaponsModel.getWeapons(weapon);
+      return updatedWeapon;
     }
     ConnectionDB.closeConnection();
     throw new DBException("Ocorreu um erro ao tentar atualizar a arma de id " + id + ". Por favor, tente novamente.");
   }
 
   public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.weaponsModel.getWeapon(weapon);
+    ArrayList<Map<String,Object>> item = this.weaponsModel.getWeapons(weapon);
     if ( item == null) {
       return false;
     }
     if (this.weaponsModel.removeWeapon(weapon)){
-      TreeMap<String, String> itemRemoved = this.weaponsModel.getWeapon(weapon);
-      if (itemRemoved == null) {
+      ArrayList<Map<String,Object>> itemRemoved = this.weaponsModel.getWeapons(weapon);
+      if (itemRemoved.size() == 0) {
         return true;
       }
     }

@@ -16,22 +16,22 @@ public class PropertiesService {
     this.propertiesModel = propertiesModel;
   }
 
-  public ArrayList<Map<String, String>> getAllProperties() throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> getAllProperties() throws FileNotFoundException, IOException {
     return this.propertiesModel.getAllProperties();
   }
 
-  public ArrayList<Map<String, String>> insertProperty(String property) throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> insertProperty(String property) throws FileNotFoundException, IOException {
     
-    TreeMap<String, String> item = this.propertiesModel.getProperty(property);
+    TreeMap<String, Object> item = this.propertiesModel.getProperty(property);
 
     if (item != null) {
-      return new ArrayList<Map<String, String>>();
+      return new ArrayList<Map<String, Object>>();
     } 
-    boolean registerProp = this.propertiesModel.insertProperty(property);
+    int registerProp = this.propertiesModel.insertProperty(property);
 
-    if (registerProp) {
-      TreeMap<String, String> registeredProp = this.propertiesModel.getProperty(property);
-      ArrayList<Map<String, String>> listProperties = new ArrayList<Map<String, String>>();
+    if (registerProp > 0) {
+      TreeMap<String, Object> registeredProp = this.propertiesModel.getProperty(property);
+      ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
       listProperties.add(registeredProp);
       return listProperties;
     }
@@ -39,19 +39,19 @@ public class PropertiesService {
     throw new DBException("Ocorreu um erro ao tentar inserir a propriedade " + property + ". Por favor, tente novamente.");
   };
 
-  public ArrayList<Map<String, String>> updateProperty(int id, String property) throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> updateProperty(int id, String property) throws FileNotFoundException, IOException {
 
-    TreeMap<String, String> item = this.propertiesModel.getProperty(id);
+    TreeMap<String, Object> item = this.propertiesModel.getProperty(id);
     
     if ( item == null) {
-      return new ArrayList<Map<String, String>>();
+      return new ArrayList<Map<String, Object>>();
     }
 
     boolean updateProp = this.propertiesModel.updateProperty(id, property);
 
     if (updateProp) {
-      TreeMap<String, String> updatedProp = this.propertiesModel.getProperty(property);
-      ArrayList<Map<String, String>> listProperties = new ArrayList<Map<String, String>>();
+      TreeMap<String, Object> updatedProp = this.propertiesModel.getProperty(property);
+      ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
       listProperties.add(updatedProp);
       return listProperties;
     }
@@ -60,14 +60,14 @@ public class PropertiesService {
   }
 
   public boolean removeProperty(String property) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.propertiesModel.getProperty(property);
+    TreeMap<String, Object> item = this.propertiesModel.getProperty(property);
     
     if ( item == null) {
       return false;
     }
 
     if (this.propertiesModel.removeProperty(property)){
-      TreeMap<String, String> itemRemoved = this.propertiesModel.getProperty(property);
+      TreeMap<String, Object> itemRemoved = this.propertiesModel.getProperty(property);
       if (itemRemoved == null) {
         return true;
       }

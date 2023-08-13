@@ -1,6 +1,8 @@
-// import weapons.WeaponsControl;
-// import weapons.WeaponsModel;
-// import weapons.WeaponsService;
+import java.util.ArrayList;
+
+import weapons.WeaponsControl;
+import weapons.WeaponsModel;
+import weapons.WeaponsService;
 
 // import properties.PropertiesControl;
 // import properties.PropertiesModel;
@@ -14,12 +16,20 @@
 // import armors.ArmorsModel;
 // import armors.ArmorsService;
 
-import categoryArmors.CatArmorsControl;
-import categoryArmors.CatArmorsModel;
-import categoryArmors.CatArmorsService;
+// import categoryArmors.CatArmorsControl;
+// import categoryArmors.CatArmorsModel;
+// import categoryArmors.CatArmorsService;
 
 public class App {
   public static void main(String[] args) throws Exception {
+    ArrayList<String> properties = new ArrayList<String>();
+    properties.add("alcance");
+    properties.add("mão inábil");
+    properties.add("mão hábil");
+    WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
+    weaponsControl.getAllWeapons();
+    // weaponsControl.insertWeapon("Arco Grande",
+    // "à distância superiores", 3, "1d10", "40/50", 2, properties);
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();
@@ -33,10 +43,6 @@ public class App {
     // armorsControl.updateArmor(24, "Armadura de plantas", 2, 0, 0, 2);
     // armorsControl.removeArmor("Armadura de plantas");
 
-    // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    // weaponsControl.getAllWeapons();
-    // weaponsControl.insertWeapon("Arco Grande",
-    // "à distância superiores", 3, "1d10", "40/50", 2);
     // weaponsControl.updateWeapon(93, "ARCO GRANDE",
     // "à distância superior", 3, "1d10", "40/50", 2);
     // weaponsControl.removeWeapon("arco grande");

@@ -27,7 +27,7 @@ public class PropertiesModel {
     this.prepStatement = null;
   }
 
-  public TreeMap<String, String> getProperty(Object data) throws FileNotFoundException, IOException {
+  public TreeMap<String, Object> getProperty(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
@@ -44,7 +44,7 @@ public class PropertiesModel {
       }
       this.resultSet = this.prepStatement.executeQuery();
       while (this.resultSet.next()) {
-        TreeMap<String, String> propertyMap = new TreeMap<String, String>();
+        TreeMap<String, Object> propertyMap = new TreeMap<String, Object>();
         propertyMap.put("id", this.resultSet.getString(1));
         propertyMap.put("property", this.resultSet.getString(2));
         return propertyMap;
@@ -55,16 +55,16 @@ public class PropertiesModel {
     }
   };
 
-  public ArrayList<Map<String, String>> getAllProperties() throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> getAllProperties() throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
       this.resultSet = this.statement.executeQuery(
         "SELECT * FROM chroniclesOfArtifacts.properties"
       );
-      ArrayList<Map<String, String>> listProperties = new ArrayList<Map<String, String>>();
+      ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
       while(this.resultSet.next()) {
-        TreeMap<String, String> line = new TreeMap<String, String>();
+        TreeMap<String, Object> line = new TreeMap<String, Object>();
         line.put("id", this.resultSet.getString("id"));
         line.put("property", this.resultSet.getString("property"));
         listProperties.add(line);
@@ -75,7 +75,7 @@ public class PropertiesModel {
     }
   }
 
-  public boolean insertProperty(String property) throws FileNotFoundException, IOException {
+  public int insertProperty(String property) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.connection.setAutoCommit(false);
@@ -88,12 +88,16 @@ public class PropertiesModel {
       this.prepStatement.setString(1, property.toLowerCase());
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
+      int generatedId = -1;
+      if (this.resultSet.next()) {
+          generatedId = this.resultSet.getInt(1);
+      }
+
       this.connection.commit();
-      return true;
-    }
-    catch (SQLException e) {
-      ConnectionDB.rollbackFunction(this.connection);
-      throw new DBException(e.getMessage());
+      return generatedId;
+    } catch (SQLException e) {
+        ConnectionDB.rollbackFunction(this.connection);
+        throw new DBException(e.getMessage());
     }
   };
 

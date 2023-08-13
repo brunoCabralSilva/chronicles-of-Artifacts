@@ -13,79 +13,101 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
+import properties.PropertiesModel;
 
 public class WeaponsModel {
   private Connection connection;
-  private Statement statement;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
 
   public WeaponsModel() {
     this.connection = null;
-    this.statement = null;
     this.resultSet = null;
     this.prepStatement = null;
   }
 
-  public TreeMap<String, String> getWeapon(Object data) throws FileNotFoundException, IOException {
+  public ArrayList<String> listOfProperties(String weapon) throws SQLException {
+    this.prepStatement = this.connection.prepareStatement(
+      "SELECT p.property FROM chroniclesOfArtifacts.properties p "
+      + "INNER JOIN chroniclesOfArtifacts.weaponProperties wp ON p.id = wp.propertyId "
+      + "INNER JOIN chroniclesOfArtifacts.weapons w ON wp.weaponId = w.id "
+      + "WHERE w.weapon = ?;",
+      Statement.RETURN_GENERATED_KEYS
+    );
+    this.prepStatement.setString(1, weapon);
+    ResultSet propertyResultSet = this.prepStatement.executeQuery();
+
+    ArrayList<String> properties = new ArrayList<String>();
+    while (propertyResultSet.next()) {
+      properties.add(propertyResultSet.getString("property"));
+    }
+    return properties;
+  }
+
+  public void addProperties(int weaponId, ArrayList<String> listProperties) throws FileNotFoundException, IOException {
+    PropertiesModel propertiesModel = new PropertiesModel();
     try {
       this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      if (!data.getClass().getSimpleName().equals("String")) {
+      this.connection.setAutoCommit(false);
+      for (String property : listProperties) {
+        TreeMap<String, Object> propertyId = propertiesModel.getProperty(property);
+        if ((int) propertyId.get("id") <= 0) {
+          propertyId = new TreeMap<String, Object>();
+          propertyId.put("id", propertiesModel.insertProperty(property));
+        }
         this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?"
+          "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
         );
-        this.prepStatement.setInt(1, (Integer) data);
+        this.prepStatement.setInt(1, (int)(propertyId.get("id")));
+        this.prepStatement.setInt(2, (int) weaponId);
+        this.prepStatement.executeUpdate();
+      }
+      this.connection.commit();
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  public ArrayList<Map<String, Object>> getWeapons(Object data) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      String query;
+      if (data == "all") {
+        query = "SELECT * FROM chroniclesOfArtifacts.weapons";
+      } else if (data.getClass().getSimpleName().equals("String")) {
+        query = "SELECT * FROM chroniclesOfArtifacts.weapons WHERE weapon = ?";
       } else {
-        this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.weapons WHERE weapon = ?"
-        );
+        query = "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?";
+      }
+      this.prepStatement = this.connection.prepareStatement(query);
+      
+      if (data instanceof Integer) {
+        this.prepStatement.setInt(1, (Integer) data);
+      } else if (data instanceof String) {
         this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
       this.resultSet = this.prepStatement.executeQuery();
+      ArrayList<Map<String, Object>> weapons = new ArrayList<>();
       while (this.resultSet.next()) {
-        TreeMap<String, String> weaponMap = new TreeMap<String, String>();
-        weaponMap.put("id", this.resultSet.getString(1));
-        weaponMap.put("weapon", this.resultSet.getString(2));
-        weaponMap.put("categoryWeapon", this.resultSet.getString(3));
-        weaponMap.put("proficiency", this.resultSet.getString(4));
-        weaponMap.put("damage", this.resultSet.getString(5));
-        weaponMap.put("rangeWeapon", this.resultSet.getString(6));
-        weaponMap.put("numberOfHands", this.resultSet.getString(7));
-        return weaponMap;
+        TreeMap<String, Object> weaponMap = new TreeMap<>();
+        weaponMap.put("id", this.resultSet.getInt("id"));
+        weaponMap.put("weapon", this.resultSet.getString("weapon"));
+        weaponMap.put("categoryWeapon", this.resultSet.getString("categoryWeapon"));
+        weaponMap.put("proficiency", this.resultSet.getInt("proficiency"));
+        weaponMap.put("damage", this.resultSet.getString("damage"));
+        weaponMap.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
+        weaponMap.put("numberOfHands", this.resultSet.getInt("numberOfHands"));
+        weaponMap.put("properties", this.listOfProperties((String) weaponMap.get("weapon")));
+        weapons.add(weaponMap);
       }
-      return null;
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
-    }
-  };
-
-  public ArrayList<Map<String, String>> getAllWeapons() throws FileNotFoundException, IOException {
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      this.resultSet = this.statement.executeQuery(
-        "SELECT * FROM chroniclesOfArtifacts.weapons"
-      );
-      ArrayList<Map<String, String>> listWeapons = new ArrayList<Map<String, String>>();
-      while(this.resultSet.next()) {
-        TreeMap<String, String> line = new TreeMap<String, String>();
-        line.put("id", this.resultSet.getString("id"));
-        line.put("weapon", this.resultSet.getString("weapon"));
-        line.put("categoryWeapon", this.resultSet.getString("categoryWeapon"));
-        line.put("proficiency", this.resultSet.getString("proficiency"));
-        line.put("damage", this.resultSet.getString("damage"));
-        line.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
-        line.put("numberOfHands", this.resultSet.getString("numberOfHands"));
-        listWeapons.add(line);
-      }
-      return listWeapons;
+      return weapons;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
     }
   }
 
-  public boolean insertWeapon(
+  public int insertWeapon(
     String weapon,
     String categoryWeapon,
     int proficiency,
@@ -110,14 +132,17 @@ public class WeaponsModel {
       this.prepStatement.setInt(6, numberOfHands);
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
+      int generatedId = -1;
+      if (this.resultSet.next()) {
+        generatedId = this.resultSet.getInt(1);
+      }
       this.connection.commit();
-      return true;
-    }
-    catch (SQLException e) {
+      return generatedId;
+    } catch (SQLException e) {
       ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
     }
-  };
+  }
 
   public boolean updateWeapon(
     int id,
