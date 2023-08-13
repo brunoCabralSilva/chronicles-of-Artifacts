@@ -6,6 +6,10 @@
 // import properties.PropertiesModel;
 // import properties.PropertiesService;
 
+// import classes.ClassesControl;
+// import classes.ClassesModel;
+// import classes.ClassesService;
+
 public class App {
   public static void main(String[] args) throws Exception {
     // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
@@ -22,5 +26,10 @@ public class App {
     // propertiesControl.updateProperty(12, "new2");
     // propertiesControl.removeProperty("new2");
 
+    // ClassesControl classesControl = new ClassesControl(new ClassesService(new ClassesModel()));
+    // classesControl.getAllClasses();
+    // classesControl.insertClass("vindador", "agressor");
+    // classesControl.updateClass(28, "vindador 2", "agressor 2");
+    // classesControl.removeClass("vindador 2");
   }
 }
