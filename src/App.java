@@ -10,8 +10,19 @@
 // import classes.ClassesModel;
 // import classes.ClassesService;
 
+// import armors.ArmorsControl;
+// import armors.ArmorsModel;
+// import armors.ArmorsService;
+
 public class App {
   public static void main(String[] args) throws Exception {
+
+    // ArmorsControl armorsControl = new ArmorsControl(new ArmorsService(new ArmorsModel()));
+    // armorsControl.getAllArmors();
+    // armorsControl.insertArmor("Armadura de ossos", 2, 0, 0, 2);
+    // armorsControl.updateArmor(24, "Armadura de plantas", 2, 0, 0, 2);
+    // armorsControl.removeArmor("Armadura de plantas");
+
     // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
     // weaponsControl.getAllWeapons();
     // weaponsControl.insertWeapon("Arco Grande",
