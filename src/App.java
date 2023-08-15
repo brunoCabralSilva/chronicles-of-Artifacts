@@ -1,8 +1,8 @@
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
-import weapons.WeaponsControl;
-import weapons.WeaponsModel;
-import weapons.WeaponsService;
+// import control.WeaponsControl;
+// import model.WeaponsModel;
+// import service.WeaponsService;
 
 // import properties.PropertiesControl;
 // import properties.PropertiesModel;
@@ -22,17 +22,17 @@ import weapons.WeaponsService;
 
 public class App {
   public static void main(String[] args) throws Exception {
-    ArrayList<String> properties = new ArrayList<String>();
-    properties.add("três");
-    properties.add("seis");
-    properties.add("sete");
-    WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
+    // ArrayList<String> properties = new ArrayList<String>();
+    // properties.add("três");
+    // properties.add("seis");
+    // properties.add("oito");
+    // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
     // weaponsControl.getWeapons();
     // weaponsControl.insertWeapon("Arco Grande",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    // weaponsControl.updateWeapon(148, "Arco mais ou menos",
+    // weaponsControl.updateWeapon(149, "Arco mais ou menos",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
-    weaponsControl.removeWeapon("arco mais ou menos");
+    // weaponsControl.removeWeapon("arco mais ou menos");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();
