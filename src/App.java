@@ -23,16 +23,16 @@ import weapons.WeaponsService;
 public class App {
   public static void main(String[] args) throws Exception {
     ArrayList<String> properties = new ArrayList<String>();
-    properties.add("alcance");
-    properties.add("mão de boas");
-    properties.add("mão ok");
+    properties.add("três");
+    properties.add("seis");
+    properties.add("cinco");
     WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    // weaponsControl.getWeapons();
-    weaponsControl.insertWeapon("Arco Grande",
-    "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    // weaponsControl.updateWeapon(121, "Arco mais ou menos",
-    // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
-    // weaponsControl.removeWeapon("ARCO GRANDE");
+    weaponsControl.getWeapons();
+    // weaponsControl.insertWeapon("Arco Grande",
+    // "à distância superiores", 3, "1d10", "40/50", 2, properties);
+    // weaponsControl.updateWeapon(147, "Arco mais ou menos",
+    // "à distância superiores", 3, "1d10", "40/50", 2, properties, false);
+    // weaponsControl.removeWeapon("arco mais ou menos");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();

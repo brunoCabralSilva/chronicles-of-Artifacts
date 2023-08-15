@@ -45,7 +45,7 @@ public class PropertiesModel {
       this.resultSet = this.prepStatement.executeQuery();
       while (this.resultSet.next()) {
         TreeMap<String, Object> propertyMap = new TreeMap<String, Object>();
-        propertyMap.put("id", this.resultSet.getString(1));
+        propertyMap.put("id", this.resultSet.getInt(1));
         propertyMap.put("property", this.resultSet.getString(2));
         return propertyMap;
       }

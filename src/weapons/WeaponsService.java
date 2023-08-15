@@ -85,9 +85,10 @@ public class WeaponsService {
 
   public boolean removeWeapon(String weapon) throws FileNotFoundException, IOException {
     ArrayList<Map<String,Object>> item = this.weaponsModel.getWeapons(weapon);
-    if ( item == null) {
+    if ( item == null || item.size() == 0) {
       return false;
     }
+    System.out.println(item);
     if (this.weaponsModel.removeWeapon(weapon, item)){
       ArrayList<Map<String,Object>> itemRemoved = this.weaponsModel.getWeapons(weapon);
       if (itemRemoved.size() == 0) {

@@ -13,70 +13,19 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
-import properties.PropertiesModel;
+import weaponProperties.WeaponPropertiesModel;
 
 public class WeaponsModel {
   private Connection connection;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
+  WeaponPropertiesModel weaponsPropertiesModel;
 
   public WeaponsModel() {
     this.connection = null;
     this.resultSet = null;
     this.prepStatement = null;
-  }
-
-  public ArrayList<String> listOfProperties(String weapon) throws SQLException {
-    this.prepStatement = this.connection.prepareStatement(
-      "SELECT p.property FROM chroniclesOfArtifacts.properties p "
-      + "INNER JOIN chroniclesOfArtifacts.weaponProperties wp ON p.id = wp.propertyId "
-      + "INNER JOIN chroniclesOfArtifacts.weapons w ON wp.weaponId = w.id "
-      + "WHERE w.weapon = ?;",
-      Statement.RETURN_GENERATED_KEYS
-    );
-    this.prepStatement.setString(1, weapon);
-    ResultSet propertyResultSet = this.prepStatement.executeQuery();
-
-    ArrayList<String> properties = new ArrayList<String>();
-    while (propertyResultSet.next()) {
-      properties.add(propertyResultSet.getString("property"));
-    }
-    return properties;
-  }
-
-  public void addProperties(int weaponId, ArrayList<String> listProperties) throws FileNotFoundException, IOException {
-    PropertiesModel propertiesModel = new PropertiesModel();
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.connection.setAutoCommit(false);
-      for (String property : listProperties) {
-        TreeMap<String, Object> propertyId = propertiesModel.getProperty(property);
-        if (Integer.parseInt((String) propertyId.get("id")) <= 0) {
-          propertyId = new TreeMap<String, Object>();
-          propertyId.put("id", propertiesModel.insertProperty(property));
-        }
-        this.prepStatement = this.connection.prepareStatement(
-          "SELECT * FROM chroniclesOfArtifacts.weaponProperties "
-          + "WHERE propertyId = ? AND weaponId = ?"
-        );
-        this.prepStatement.setInt(1, Integer.parseInt((String) propertyId.get("id")));
-        this.prepStatement.setInt(2, weaponId);
-        this.resultSet = this.prepStatement.executeQuery();
-
-        if (!this.resultSet.next()) {
-          this.prepStatement = this.connection.prepareStatement(
-            "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
-          );
-          this.prepStatement.setInt(1, Integer.parseInt((String)propertyId.get("id")));
-          this.prepStatement.setInt(2, weaponId);
-          this.prepStatement.executeUpdate();
-        }
-      }
-      this.connection.commit();
-    } catch (SQLException e) {
-      ConnectionDB.rollbackFunction(this.connection);
-      throw new DBException(e.getMessage());
-    }
+    this.weaponsPropertiesModel = new WeaponPropertiesModel();
   }
 
   public ArrayList<Map<String, Object>> getWeapons(Object data) throws FileNotFoundException, IOException {
@@ -91,7 +40,6 @@ public class WeaponsModel {
         query = "SELECT * FROM chroniclesOfArtifacts.weapons WHERE id = ?";
       }
       this.prepStatement = this.connection.prepareStatement(query);
-
       if (data instanceof Integer) {
         this.prepStatement.setInt(1, (Integer) data);
       } else if (data instanceof String && data != "all") {
@@ -108,7 +56,7 @@ public class WeaponsModel {
         weaponMap.put("damage", this.resultSet.getString("damage"));
         weaponMap.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
         weaponMap.put("numberOfHands", this.resultSet.getInt("numberOfHands"));
-        weaponMap.put("properties", this.listOfProperties((String) weaponMap.get("weapon")));
+        weaponMap.put("properties", this.weaponsPropertiesModel.weaponPropertiesByWeapon((String) weaponMap.get("weapon")));
         weapons.add(weaponMap);
       }
       return weapons;
@@ -148,7 +96,7 @@ public class WeaponsModel {
         generatedId = this.resultSet.getInt(1);
       }
       if (properties.size() > 0 && generatedId > 0) {
-        this.addProperties(generatedId, properties);
+        this.weaponsPropertiesModel.insertWeaponProperties(generatedId, properties);
       }
       this.connection.commit();
       return generatedId;
@@ -188,10 +136,10 @@ public class WeaponsModel {
       this.prepStatement.executeUpdate();
       if (properties.size() != 0) {
         if (override) {
-          this.removeCatProp(id);
-          this.addProperties(id, properties);
+          this.weaponsPropertiesModel.removeWeaponProperty(id);
+          this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
         } else {
-          this.addProperties(id, properties);
+          this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
         }
       }
       this.connection.commit();
@@ -202,12 +150,13 @@ public class WeaponsModel {
     } 
   };
 
-  public boolean removeWeapon(String weapon,ArrayList<Map<String,Object>> item) throws FileNotFoundException, IOException {
+  public boolean removeWeapon(String weapon, ArrayList<Map<String,Object>> item) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      this.removeCatProp((int) item.get(0).get("id"));
+      System.out.println((int) item.get(0).get("id"));
+      this.weaponsPropertiesModel.removeWeaponProperty((int) item.get(0).get("id"));
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "
         + "WHERE weapon = ? ",
@@ -219,23 +168,6 @@ public class WeaponsModel {
       this.resultSet.next();
       this.connection.commit();
       return true;
-    } catch (SQLException e) {
-      ConnectionDB.rollbackFunction(this.connection);
-      throw new DBException(e.getMessage());
-    }
-  }
-
-  public void removeCatProp(int id) throws FileNotFoundException, IOException {
-    this.connection = ConnectionDB.getConnection();
-    try {
-      this.connection.setAutoCommit(false);
-      this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      this.prepStatement.executeUpdate();
-      this.prepStatement = this.connection.prepareStatement(
-        "DELETE FROM chroniclesOfArtifacts.weaponProperties "
-        + "WHERE weaponId = ?"
-      );
-      this.connection.commit();
     } catch (SQLException e) {
       ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
