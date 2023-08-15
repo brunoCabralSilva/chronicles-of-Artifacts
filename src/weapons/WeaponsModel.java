@@ -47,7 +47,10 @@ public class WeaponsModel {
       }
       this.resultSet = this.prepStatement.executeQuery();
       ArrayList<Map<String, Object>> weapons = new ArrayList<>();
+      
       while (this.resultSet.next()) {
+        ArrayList<String> property = this.weaponsPropertiesModel.weaponPropertiesByWeapon((String) this.resultSet.getString("weapon"));
+        
         TreeMap<String, Object> weaponMap = new TreeMap<>();
         weaponMap.put("id", this.resultSet.getInt("id"));
         weaponMap.put("weapon", this.resultSet.getString("weapon"));
@@ -56,7 +59,7 @@ public class WeaponsModel {
         weaponMap.put("damage", this.resultSet.getString("damage"));
         weaponMap.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
         weaponMap.put("numberOfHands", this.resultSet.getInt("numberOfHands"));
-        weaponMap.put("properties", this.weaponsPropertiesModel.weaponPropertiesByWeapon((String) weaponMap.get("weapon")));
+        weaponMap.put("properties", property);
         weapons.add(weaponMap);
       }
       return weapons;
@@ -155,7 +158,6 @@ public class WeaponsModel {
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      System.out.println((int) item.get(0).get("id"));
       this.weaponsPropertiesModel.removeWeaponProperty((int) item.get(0).get("id"));
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "

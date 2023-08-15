@@ -25,14 +25,14 @@ public class App {
     ArrayList<String> properties = new ArrayList<String>();
     properties.add("três");
     properties.add("seis");
-    properties.add("cinco");
+    properties.add("sete");
     WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    weaponsControl.getWeapons();
+    // weaponsControl.getWeapons();
     // weaponsControl.insertWeapon("Arco Grande",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    // weaponsControl.updateWeapon(147, "Arco mais ou menos",
-    // "à distância superiores", 3, "1d10", "40/50", 2, properties, false);
-    // weaponsControl.removeWeapon("arco mais ou menos");
+    // weaponsControl.updateWeapon(148, "Arco mais ou menos",
+    // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
+    weaponsControl.removeWeapon("arco mais ou menos");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();

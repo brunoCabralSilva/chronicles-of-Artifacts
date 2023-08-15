@@ -26,7 +26,8 @@ public class WeaponPropertiesModel {
     this.prepStatement = null;
     this.propertiesModel = new PropertiesModel();
   }
-  public ArrayList<String> weaponPropertiesByWeapon(String weapon) throws SQLException {
+  public ArrayList<String> weaponPropertiesByWeapon(String weapon) throws SQLException, FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
     this.prepStatement = this.connection.prepareStatement(
       "SELECT p.property FROM chroniclesOfArtifacts.properties p "
       + "INNER JOIN chroniclesOfArtifacts.weaponProperties wp ON p.id = wp.propertyId "
@@ -53,6 +54,7 @@ public class WeaponPropertiesModel {
           propertyId = new TreeMap<String, Object>();
           propertyId.put("id", this.propertiesModel.insertProperty(property));
         }
+
         this.prepStatement = this.connection.prepareStatement(
           "SELECT * FROM chroniclesOfArtifacts.weaponProperties "
           + "WHERE propertyId = ? AND weaponId = ?"
@@ -65,12 +67,12 @@ public class WeaponPropertiesModel {
           this.prepStatement = this.connection.prepareStatement(
             "INSERT INTO chroniclesOfArtifacts.weaponProperties (propertyId, weaponId) VALUES (?, ?)"
           );
+
           this.prepStatement.setInt(1, (Integer) propertyId.get("id"));
           this.prepStatement.setInt(2, weaponId);
           this.prepStatement.executeUpdate();
         }
       }
-      this.connection.commit();
     } catch (SQLException e) {
       ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
