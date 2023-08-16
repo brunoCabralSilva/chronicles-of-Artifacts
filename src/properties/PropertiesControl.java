@@ -1,4 +1,4 @@
-package inProduction.properties;
+package properties;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -18,21 +18,34 @@ public class PropertiesControl {
   
   private void returnProperties(ArrayList<Map<String, Object>> listProps) {
     int i = 0;
-    while(i < listProps.size()) {
-        System.out.println(
+    while (i < listProps.size()) {
+      Object idValueObj = listProps.get(i).get("id");
+      int idValue = 0;
+      if (idValueObj instanceof Integer) {
+        idValue = (Integer) idValueObj;
+      } else if (idValueObj instanceof String) {
+        idValue = Integer.parseInt((String) idValueObj);
+      }
+      if (idValue != 0) {
+        System.out.print(
           "\n"
           + "ID: "
-          + listProps.get(i).get("id")
-          + "\nPropriedade: "
-          + this.firstLetterUp(listProps.get(i).get("property"))
-          + "\n"
+          + idValue
         );
+      } 
+      System.out.println(
+        "\nPropriedade: "
+        + this.firstLetterUp(listProps.get(i).get("property"))
+        + "\nArmas relacionadas: "
+        + "\n"
+        + listProps.get(i).get("weapons")
+      );
       i += 1;
     }
   }
 
-  public void getAllProperties() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, Object>> allProperties = this.propertiesService.getAllProperties();
+  public void getProperties() throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allProperties = this.propertiesService.getProperties();
     if (allProperties.size() == 0 ) {
       System.out.println("\nNão foram encontradas Propriedades registradas no banco de dados!\n");
     } else {

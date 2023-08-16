@@ -138,7 +138,7 @@ public class WeaponsModel {
       this.prepStatement.executeUpdate();
       if (properties.size() != 0) {
         if (override) {
-          this.weaponsPropertiesModel.removeWeaponProperty(id);
+          this.weaponsPropertiesModel.removeWeaponProperties("weaponId", id);
           this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
         } else {
           this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
@@ -157,7 +157,7 @@ public class WeaponsModel {
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      this.weaponsPropertiesModel.removeWeaponProperty((int) item.get(0).get("id"));
+      this.weaponsPropertiesModel.removeWeaponProperties("weaponId", (int) item.get(0).get("id"));
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.weapons "
         + "WHERE weapon = ? ",

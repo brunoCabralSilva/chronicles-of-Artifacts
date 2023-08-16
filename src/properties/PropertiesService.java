@@ -1,10 +1,9 @@
-package inProduction.properties;
+package properties;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
@@ -16,24 +15,25 @@ public class PropertiesService {
     this.propertiesModel = propertiesModel;
   }
 
-  public ArrayList<Map<String, Object>> getAllProperties() throws FileNotFoundException, IOException {
-    return this.propertiesModel.getAllProperties();
+  public ArrayList<Map<String, Object>> getProperties() throws FileNotFoundException, IOException {
+    return this.propertiesModel.getProperties("all");
   }
 
   public ArrayList<Map<String, Object>> insertProperty(String property) throws FileNotFoundException, IOException {
     
-    TreeMap<String, Object> item = this.propertiesModel.getProperty(property);
+    ArrayList<Map<String, Object>> item = this.propertiesModel.getProperties(property);
 
-    if (item != null) {
+    System.out.println(item);
+
+    if (item.size() > 0) {
       return new ArrayList<Map<String, Object>>();
-    } 
+    }
+
     int registerProp = this.propertiesModel.insertProperty(property);
 
     if (registerProp > 0) {
-      TreeMap<String, Object> registeredProp = this.propertiesModel.getProperty(property);
-      ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
-      listProperties.add(registeredProp);
-      return listProperties;
+      ArrayList<Map<String, Object>> registeredProp = this.propertiesModel.getProperties(property);
+      return registeredProp;
     }
     ConnectionDB.closeConnection();
     throw new DBException("Ocorreu um erro ao tentar inserir a propriedade " + property + ". Por favor, tente novamente.");
@@ -41,7 +41,7 @@ public class PropertiesService {
 
   public ArrayList<Map<String, Object>> updateProperty(int id, String property) throws FileNotFoundException, IOException {
 
-    TreeMap<String, Object> item = this.propertiesModel.getProperty(id);
+    ArrayList<Map<String, Object>> item = this.propertiesModel.getProperties(id);
     
     if ( item == null) {
       return new ArrayList<Map<String, Object>>();
@@ -50,28 +50,32 @@ public class PropertiesService {
     boolean updateProp = this.propertiesModel.updateProperty(id, property);
 
     if (updateProp) {
-      TreeMap<String, Object> updatedProp = this.propertiesModel.getProperty(property);
-      ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
-      listProperties.add(updatedProp);
-      return listProperties;
+      ArrayList<Map<String, Object>> updatedProp = this.propertiesModel.getProperties(property);
+      return updatedProp;
     }
     ConnectionDB.closeConnection();
     throw new DBException("Ocorreu um erro ao tentar atualizar a propriedade de id " + id + ". Por favor, tente novamente.");
   }
 
   public boolean removeProperty(String property) throws FileNotFoundException, IOException {
-    TreeMap<String, Object> item = this.propertiesModel.getProperty(property);
+    ArrayList<Map<String, Object>> item = this.propertiesModel.getProperties(property);
     
-    if ( item == null) {
+    if (item == null || item.size() == 0) {
       return false;
     }
 
-    if (this.propertiesModel.removeProperty(property)){
-      TreeMap<String, Object> itemRemoved = this.propertiesModel.getProperty(property);
-      if (itemRemoved == null) {
+    if(
+        this.propertiesModel.removeProperty(
+        property,
+        Integer.parseInt((String) item.get(0).get("id"))
+      )
+    ) {
+      ArrayList<Map<String, Object>> itemRemoved = this.propertiesModel.getProperties(property);
+      System.out.println(itemRemoved);
+      if (itemRemoved == null || itemRemoved.size() == 0) {
         return true;
       }
     }
-    throw new DBException("Ocorreu um erro ao tentar remover a propriedade  " + property + ". Por favor, tente novamente"); 
+    throw new DBException("Ocorreu um erro ao tentar remover a propriedade  " + property + ". Por favor, tente novamente");
   }
 }

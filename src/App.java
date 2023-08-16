@@ -1,12 +1,8 @@
-// import java.util.ArrayList;
+import java.util.ArrayList;
 
-// import control.WeaponsControl;
-// import model.WeaponsModel;
-// import service.WeaponsService;
-
-// import properties.PropertiesControl;
-// import properties.PropertiesModel;
-// import properties.PropertiesService;
+import control.WeaponsControl;
+import model.WeaponsModel;
+import service.WeaponsService;
 
 // import classes.ClassesControl;
 // import classes.ClassesModel;
@@ -20,19 +16,28 @@
 // import categoryArmors.CatArmorsModel;
 // import categoryArmors.CatArmorsService;
 
+import properties.PropertiesControl;
+import properties.PropertiesModel;
+import properties.PropertiesService;
+
 public class App {
   public static void main(String[] args) throws Exception {
+
+    // PropertiesControl propertiesControl = new PropertiesControl(new PropertiesService(new PropertiesModel()));
+    // propertiesControl.getProperties();
+    // propertiesControl.insertProperty("new");
+    // propertiesControl.updateProperty(38, "new2");
+    // propertiesControl.removeProperty("new");
+
     // ArrayList<String> properties = new ArrayList<String>();
-    // properties.add("três");
-    // properties.add("seis");
-    // properties.add("oito");
+    // properties.add("new");
     // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
     // weaponsControl.getWeapons();
     // weaponsControl.insertWeapon("Arco Grande",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    // weaponsControl.updateWeapon(149, "Arco mais ou menos",
+    // weaponsControl.updateWeapon(157, "Arco mais ou menos",
     // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
-    // weaponsControl.removeWeapon("arco mais ou menos");
+    // weaponsControl.removeWeapon("arco grande");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();
@@ -49,12 +54,6 @@ public class App {
     // weaponsControl.updateWeapon(93, "ARCO GRANDE",
     // "à distância superior", 3, "1d10", "40/50", 2);
     // weaponsControl.removeWeapon("arco grande");
-
-    // PropertiesControl propertiesControl = new PropertiesControl(new PropertiesService(new PropertiesModel()));
-    // propertiesControl.getAllProperties();
-    // propertiesControl.insertProperty("new");
-    // propertiesControl.updateProperty(12, "new2");
-    // propertiesControl.removeProperty("new2");
 
     // ClassesControl classesControl = new ClassesControl(new ClassesService(new ClassesModel()));
     // classesControl.getAllClasses();

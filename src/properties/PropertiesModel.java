@@ -1,4 +1,4 @@
-package inProduction.properties;
+package properties;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,61 +13,54 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
+import model.WeaponPropertiesModel;
 
 public class PropertiesModel {
   private Connection connection;
-  private Statement statement;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
+  WeaponPropertiesModel weaponsPropertiesModel;
 
   public PropertiesModel() {
     this.connection = null;
-    this.statement = null;
     this.resultSet = null;
     this.prepStatement = null;
+    this.weaponsPropertiesModel = new WeaponPropertiesModel();
   }
 
-  public TreeMap<String, Object> getProperty(Object data) throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> getProperties(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      if (!data.getClass().getSimpleName().equals("String")) {
-        this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.properties WHERE id = ?"
-        );
-        this.prepStatement.setInt(1, (Integer) data);
+      String query;
+      if (data == "all") {
+        query = "SELECT * FROM chroniclesOfArtifacts.properties";
+      } else if (data.getClass().getSimpleName().equals("String")) {
+        query = "SELECT * FROM chroniclesOfArtifacts.properties WHERE property = ?";
       } else {
-        this.prepStatement = this.connection.prepareStatement(
-        "SELECT * FROM chroniclesOfArtifacts.properties WHERE property = ?"
-        );
+        query = "SELECT * FROM chroniclesOfArtifacts.properties WHERE id = ?";
+      }
+      this.prepStatement = this.connection.prepareStatement(query);
+      if (data instanceof Integer) {
+        this.prepStatement.setInt(1, (Integer) data);
+      } else if (data instanceof String && data != "all") {
         this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
       this.resultSet = this.prepStatement.executeQuery();
-      while (this.resultSet.next()) {
-        TreeMap<String, Object> propertyMap = new TreeMap<String, Object>();
-        propertyMap.put("id", this.resultSet.getInt(1));
-        propertyMap.put("property", this.resultSet.getString(2));
-        return propertyMap;
-      }
-      return null;
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
-    }
-  };
-
-  public ArrayList<Map<String, Object>> getAllProperties() throws FileNotFoundException, IOException {
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      this.resultSet = this.statement.executeQuery(
-        "SELECT * FROM chroniclesOfArtifacts.properties"
-      );
+      
       ArrayList<Map<String, Object>> listProperties = new ArrayList<Map<String, Object>>();
-      while(this.resultSet.next()) {
+
+      
+      while (this.resultSet.next()) {
         TreeMap<String, Object> line = new TreeMap<String, Object>();
+        ArrayList<String> properties = this.weaponsPropertiesModel.weaponPropertiesByProp(Integer.parseInt(this.resultSet.getString("id")));
         line.put("id", this.resultSet.getString("id"));
         line.put("property", this.resultSet.getString("property"));
+        line.put("weapons", properties);
         listProperties.add(line);
+      }
+      if (listProperties.size() > 1) {
+        TreeMap<String, Object> noOneProperties = this.weaponsPropertiesModel.weaponWithoutProp();
+        listProperties.add(noOneProperties);
       }
       return listProperties;
     } catch (SQLException e) {
@@ -92,7 +85,6 @@ public class PropertiesModel {
       if (this.resultSet.next()) {
           generatedId = this.resultSet.getInt(1);
       }
-
       this.connection.commit();
       return generatedId;
     } catch (SQLException e) {
@@ -122,13 +114,13 @@ public class PropertiesModel {
     } 
   };
 
-  public boolean removeProperty(String property) throws FileNotFoundException, IOException {
+  public boolean removeProperty(String property, int id) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
       this.prepStatement.executeUpdate();
-      
+      this.weaponsPropertiesModel.removeWeaponProperties("propertyId", id);
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.properties "
         + "WHERE property = ? ",
