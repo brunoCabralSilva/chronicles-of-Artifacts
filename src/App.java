@@ -1,24 +1,11 @@
-import java.util.ArrayList;
+// import java.util.ArrayList;
 
-import control.WeaponsControl;
-import model.WeaponsModel;
-import service.WeaponsService;
-
-// import classes.ClassesControl;
-// import classes.ClassesModel;
-// import classes.ClassesService;
-
-// import armors.ArmorsControl;
-// import armors.ArmorsModel;
-// import armors.ArmorsService;
-
-// import categoryArmors.CatArmorsControl;
-// import categoryArmors.CatArmorsModel;
-// import categoryArmors.CatArmorsService;
-
-import properties.PropertiesControl;
-import properties.PropertiesModel;
-import properties.PropertiesService;
+// import control.PropertiesControl;
+// import control.WeaponsControl;
+// import model.PropertiesModel;
+// import model.WeaponsModel;
+// import service.PropertiesService;
+// import service.WeaponsService;
 
 public class App {
   public static void main(String[] args) throws Exception {

@@ -1,4 +1,4 @@
-package properties;
+package service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import connection.ConnectionDB;
 import connection.DBException;
+import model.PropertiesModel;
 
 public class PropertiesService {
   PropertiesModel propertiesModel = null;

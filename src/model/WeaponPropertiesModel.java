@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
-import properties.PropertiesModel;
 
 public class WeaponPropertiesModel {
   private Connection connection;

@@ -1,9 +1,11 @@
-package properties;
+package control;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+
+import service.PropertiesService;
 
 public class PropertiesControl {
   PropertiesService propertiesService = null;

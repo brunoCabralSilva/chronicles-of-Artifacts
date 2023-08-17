@@ -1,4 +1,4 @@
-package properties;
+package model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,7 +13,6 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
-import model.WeaponPropertiesModel;
 
 public class PropertiesModel {
   private Connection connection;
