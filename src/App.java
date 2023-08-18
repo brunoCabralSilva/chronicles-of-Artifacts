@@ -7,24 +7,17 @@
 // import service.PropertiesService;
 // import service.WeaponsService;
 
+import inProduction.classes.ClassesControl;
+import inProduction.classes.ClassesModel;
+import inProduction.classes.ClassesService;
+
 public class App {
   public static void main(String[] args) throws Exception {
-
-    // PropertiesControl propertiesControl = new PropertiesControl(new PropertiesService(new PropertiesModel()));
-    // propertiesControl.getProperties();
-    // propertiesControl.insertProperty("new");
-    // propertiesControl.updateProperty(38, "new2");
-    // propertiesControl.removeProperty("new");
-
-    // ArrayList<String> properties = new ArrayList<String>();
-    // properties.add("new");
-    // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));
-    // weaponsControl.getWeapons();
-    // weaponsControl.insertWeapon("Arco Grande",
-    // "à distância superiores", 3, "1d10", "40/50", 2, properties);
-    // weaponsControl.updateWeapon(157, "Arco mais ou menos",
-    // "à distância superiores", 3, "1d10", "40/50", 2, properties, true);
-    // weaponsControl.removeWeapon("arco grande");
+    ClassesControl classesControl = new ClassesControl(new ClassesService(new ClassesModel()));
+    classesControl.getAllClasses();
+    // classesControl.insertClass("vingador", "agressor");
+    // classesControl.updateClass(29, "vingador 2", "agressor 2");
+    // classesControl.removeClass("vingador 2");
 
     // CatArmorsControl catArmorsControl = new CatArmorsControl(new CatArmorsService(new CatArmorsModel()));
     // catArmorsControl.getAllCatArmors();
@@ -37,15 +30,5 @@ public class App {
     // armorsControl.insertArmor("Armadura de ossos", 2, 0, 0, 2);
     // armorsControl.updateArmor(24, "Armadura de plantas", 2, 0, 0, 2);
     // armorsControl.removeArmor("Armadura de plantas");
-
-    // weaponsControl.updateWeapon(93, "ARCO GRANDE",
-    // "à distância superior", 3, "1d10", "40/50", 2);
-    // weaponsControl.removeWeapon("arco grande");
-
-    // ClassesControl classesControl = new ClassesControl(new ClassesService(new ClassesModel()));
-    // classesControl.getAllClasses();
-    // classesControl.insertClass("vindador", "agressor");
-    // classesControl.updateClass(28, "vindador 2", "agressor 2");
-    // classesControl.removeClass("vindador 2");
   }
 }
