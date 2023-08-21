@@ -90,7 +90,63 @@ public class ArmorClassesModel {
     }
   }
 
-  public void insertArmorClass(ArrayList<String> categoryWeapons, int classId) {
-    
+  public void insertArmorClass(ArrayList<String> armors, int classId) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      for (int i = 0; i < armors.size(); i += 1) {
+        this.prepStatement = this.connection.prepareStatement(
+          "SELECT id from chroniclesOfArtifacts.categoryArmors "
+          + "WHERE categoryArmor = ?;"
+        );
+        this.prepStatement.setString(1, armors.get(i));
+        this.resultSet = this.prepStatement.executeQuery();
+        int armorId = 0;
+        if (this.resultSet.next()) {
+          armorId = this.resultSet.getInt("id");
+        };
+        this.prepStatement = this.connection.prepareStatement(
+          "SELECT * FROM chroniclesOfArtifacts.armorClasses "
+          + "WHERE classId = ? AND catArmorId = ?",
+          Statement.RETURN_GENERATED_KEYS
+        );
+        this.prepStatement.setInt(1, classId);
+        this.prepStatement.setInt(2, armorId);
+        ResultSet result = this.prepStatement.executeQuery();
+        boolean resultBoolean = result.next();
+        if (!resultBoolean) {
+          if (this.resultSet.next()) {
+            this.prepStatement = this.connection.prepareStatement(
+              "INSERT INTO chroniclesOfArtifacts.armorClasses "
+              + "(classId, catArmorId) "
+              + "VALUES(?, ?)",
+              Statement.RETURN_GENERATED_KEYS
+            );
+            this.prepStatement.setInt(1, classId);
+            this.prepStatement.setInt(2, armorId);
+            this.prepStatement.executeUpdate();
+          }
+        }
+      }
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  public void removeArmorClasses(int classId) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.armorClasses "
+        + "WHERE classId = ?",
+        Statement.RETURN_GENERATED_KEYS
+      );
+      this.prepStatement.setInt(1, classId);
+      this.prepStatement.executeUpdate();
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
   }
 }
+

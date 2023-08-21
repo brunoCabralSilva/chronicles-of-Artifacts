@@ -38,7 +38,7 @@ public class ClassesModel {
       if (data == "all") {
         query = "SELECT * FROM chroniclesOfArtifacts.classes";
       } else if (data.getClass().getSimpleName().equals("String")) {
-        query = "SELECT * FROM chroniclesOfArtifacts.classes WHERE class = ?";
+        query = "SELECT * FROM chroniclesOfArtifacts.classes WHERE nameClass = ?";
       } else {
         query = "SELECT * FROM chroniclesOfArtifacts.classes WHERE id = ?";
       }
@@ -74,11 +74,11 @@ public class ClassesModel {
     }
   }
 
-  public boolean insertClass(
+  public int insertClass(
     String nameClass,
     String functionClass,
-    ArrayList<String> categoryWeapons,
-    ArrayList<String> categoryArmors
+    ArrayList<String> weapons,
+    ArrayList<String> armors
   ) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
@@ -96,9 +96,82 @@ public class ClassesModel {
       int generatedId = -1;
       if (this.resultSet.next()) {
         generatedId = this.resultSet.getInt(1);
-        this.weaponClassesModel.insertWeaponClass(categoryWeapons, generatedId);
-        this.armorClassesModel.insertArmorClass(categoryArmors, generatedId);
+        this.weaponClassesModel.insertWeaponClass(weapons, generatedId);
+        this.armorClassesModel.insertArmorClass(armors, generatedId);
       }
+      this.connection.commit();
+      return generatedId;
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  public boolean updateClass(
+    int id,
+    String nameClass,
+    String functionClass,
+    ArrayList<String> weapons,
+    ArrayList<String> armors,
+    boolean overrideWeapons,
+    boolean overrideArmors
+    ) throws FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
+    try {
+      this.connection.setAutoCommit(false);
+      this.prepStatement = this.connection.prepareStatement(
+        "UPDATE chroniclesOfArtifacts.classes "
+        + "SET nameClass = ?, functionClass = ? "
+        + " WHERE id = ?",
+        Statement.RETURN_GENERATED_KEYS
+      );
+      this.prepStatement.setString(1, nameClass.toLowerCase());
+      this.prepStatement.setString(2, functionClass.toLowerCase());
+      this.prepStatement.setInt(3, id);
+      this.prepStatement.executeUpdate();
+      if (weapons.size() != 0) {
+        if (overrideWeapons) {
+          this.weaponClassesModel.removeWeaponClasses(id);
+          this.weaponClassesModel.insertWeaponClass(weapons, id);
+        } else {
+          this.weaponClassesModel.insertWeaponClass(weapons, id);
+        }
+      } else {
+        this.weaponClassesModel.removeWeaponClasses(id);
+      }
+      if (armors.size() != 0) {
+        if (overrideArmors) {
+          this.armorClassesModel.removeArmorClasses(id);
+          this.armorClassesModel.insertArmorClass(armors, id);
+        } else {
+          this.armorClassesModel.insertArmorClass(armors, id);
+        }
+      } else {
+        this.armorClassesModel.removeArmorClasses(id);
+      }
+      this.connection.commit();
+      return true;
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    } 
+  };
+
+  public boolean removeClass(String nameClass) throws FileNotFoundException, IOException {
+    this.connection = ConnectionDB.getConnection();
+    try {
+      this.connection.setAutoCommit(false);
+      this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
+      // this.weaponsPropertiesModel.removeWeaponProperties("weaponId", (int) item.get(0).get("id"));
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.classes "
+        + "WHERE class = ? ",
+        Statement.RETURN_GENERATED_KEYS
+      );
+      this.prepStatement.setString(1, nameClass);
+      this.prepStatement.executeUpdate();
+      this.resultSet = this.prepStatement.getGeneratedKeys();
+      this.resultSet.next();
       this.connection.commit();
       return true;
     } catch (SQLException e) {
@@ -107,148 +180,3 @@ public class ClassesModel {
     }
   }
 }
-
-//   public boolean updateWeapon(
-//     int id,
-//     String weapon,
-//     String categoryWeapon,
-//     int proficiency,
-//     String damage,
-//     String rangeWeapon,
-//     int numberOfHands,
-//     ArrayList<String> properties,
-//     boolean override
-//     ) throws FileNotFoundException, IOException {
-//     this.connection = ConnectionDB.getConnection();
-//     try {
-//       this.connection.setAutoCommit(false);
-//       this.prepStatement = this.connection.prepareStatement(
-//         "UPDATE chroniclesOfArtifacts.weapons "
-//         + "SET weapon = ?, categoryWeapon = ?, proficiency = ?, damage = ?, rangeWeapon = ?, numberOfHands = ?"
-//         + " WHERE id = ?",
-//         Statement.RETURN_GENERATED_KEYS
-//       );
-//       this.prepStatement.setString(1, weapon.toLowerCase());
-//       this.prepStatement.setString(2, categoryWeapon.toLowerCase());
-//       this.prepStatement.setInt(3, proficiency);
-//       this.prepStatement.setString(4, damage.toLowerCase());
-//       this.prepStatement.setString(5, rangeWeapon.toLowerCase());
-//       this.prepStatement.setInt(6, numberOfHands);
-//       this.prepStatement.setInt(7, id);
-//       this.prepStatement.executeUpdate();
-//       if (properties.size() != 0) {
-//         if (override) {
-//           this.weaponsPropertiesModel.removeWeaponProperties("weaponId", id);
-//           this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
-//         } else {
-//           this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
-//         }
-//       }
-//       this.connection.commit();
-//       return true;
-//     } catch (SQLException e) {
-//       ConnectionDB.rollbackFunction(this.connection);
-//       throw new DBException(e.getMessage());
-//     } 
-//   };
-
-//   public boolean removeWeapon(String weapon, ArrayList<Map<String,Object>> item) throws FileNotFoundException, IOException {
-//     this.connection = ConnectionDB.getConnection();
-//     try {
-//       this.connection.setAutoCommit(false);
-//       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-//       this.weaponsPropertiesModel.removeWeaponProperties("weaponId", (int) item.get(0).get("id"));
-//       this.prepStatement = this.connection.prepareStatement(
-//         "DELETE FROM chroniclesOfArtifacts.weapons "
-//         + "WHERE weapon = ? ",
-//         Statement.RETURN_GENERATED_KEYS
-//       );
-//       this.prepStatement.setString(1, weapon);
-//       this.prepStatement.executeUpdate();
-//       this.resultSet = this.prepStatement.getGeneratedKeys();
-//       this.resultSet.next();
-//       this.connection.commit();
-//       return true;
-//     } catch (SQLException e) {
-//       ConnectionDB.rollbackFunction(this.connection);
-//       throw new DBException(e.getMessage());
-//     }
-//   }
-// }
-
-// ====================================
-
-
-//   public boolean insertClass(String nameClass, String functionClass) throws FileNotFoundException, IOException {
-//     try {
-//       this.connection = ConnectionDB.getConnection();
-//       this.connection.setAutoCommit(false);
-//       this.prepStatement = this.connection.prepareStatement(
-//         "INSERT INTO chroniclesOfArtifacts.classes "
-//         + "(nameClass, functionClass) "
-//         + "VALUES (?, ?)",
-//         Statement.RETURN_GENERATED_KEYS
-//       );
-//       this.prepStatement.setString(1, nameClass.toLowerCase());
-//       this.prepStatement.setString(2, functionClass.toLowerCase());
-//       this.prepStatement.executeUpdate();
-//       this.resultSet = this.prepStatement.getGeneratedKeys();
-//       this.connection.commit();
-//       return true;
-//     }
-//     catch (SQLException e) {
-//       ConnectionDB.rollbackFunction(this.connection);
-//       throw new DBException(e.getMessage());
-//     }
-//   };
-
-//   public boolean updateClass(
-//     int id,
-//     String nameClass,
-//     String functionClass
-//     ) throws FileNotFoundException, IOException {
-//     this.connection = ConnectionDB.getConnection();
-//     try {
-//       this.connection.setAutoCommit(false); 
-//       this.prepStatement = this.connection.prepareStatement(
-//         "UPDATE chroniclesOfArtifacts.classes "
-//         + "SET nameClass = ?, functionClass = ?"
-//         + " WHERE id = ?",
-//         Statement.RETURN_GENERATED_KEYS
-//       );
-//       this.prepStatement.setString(1, nameClass.toLowerCase());
-//       this.prepStatement.setString(2, functionClass.toLowerCase());
-//       this.prepStatement.setInt(3, id);
-//       this.prepStatement.executeUpdate();
-//       this.connection.commit();
-//       return true;
-//     } catch (SQLException e) {
-//       ConnectionDB.rollbackFunction(this.connection);
-//       throw new DBException(e.getMessage());
-//     } 
-//   };
-
-//   public boolean removeClass(String nameClass) throws FileNotFoundException, IOException {
-//     this.connection = ConnectionDB.getConnection();
-//     try {
-//       this.connection.setAutoCommit(false);
-//       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-//       this.prepStatement.executeUpdate();
-      
-//       this.prepStatement = this.connection.prepareStatement(
-//         "DELETE FROM chroniclesOfArtifacts.classes "
-//         + "WHERE nameClass = ? ",
-//         Statement.RETURN_GENERATED_KEYS
-//       );
-//       this.prepStatement.setString(1, nameClass.toLowerCase());
-//       this.prepStatement.executeUpdate();
-//       this.resultSet = this.prepStatement.getGeneratedKeys();
-//       this.resultSet.next();
-//       this.connection.commit();
-//       return true;
-//     } catch (SQLException e) {
-//       ConnectionDB.rollbackFunction(this.connection);
-//       throw new DBException(e.getMessage());
-//     }
-//   }
-// }

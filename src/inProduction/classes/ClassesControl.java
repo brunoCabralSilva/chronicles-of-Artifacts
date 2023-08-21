@@ -68,49 +68,60 @@ public class ClassesControl {
     }
   }
 
-  // public void insertClass(
-  //   String nameClass,
-  //   String functionClass
-  // ) throws FileNotFoundException, IOException {
-  //   ArrayList<Map<String, String>> insertedClass = this.classesService.insertClass(nameClass, functionClass);
+  public void insertClass(
+    String nameClass,
+    String functionClass,
+    ArrayList<String> weapons,
+    ArrayList<String> armors
+  ) throws FileNotFoundException, IOException {
+    
+    ArrayList<Map<String, Object>> insertedClass = this.classesService.insertClass(nameClass, functionClass, weapons, armors);
 
-  //   if (insertedClass.size() == 0) {
-  //     System.out.println(
-  //       "\nClasse "
-  //       + this.firstLetterUp(nameClass)
-  //       + " já existente na base de dados!\n"
-  //     );
-  //   } else {
-  //     System.out.println(
-  //       "\nClasse "
-  //       + this.firstLetterUp(nameClass)
-  //       + " adicionada com sucesso!"
-  //     );
-  //     this.returnClasses(insertedClass);
-  //   }
-  // };
+    if (insertedClass.size() == 0) {
+      System.out.println(
+        "\nClasse "
+        + this.firstLetterUp(nameClass)
+        + " já existente na base de dados!\n"
+      );
+    } else {
+      System.out.println(
+        "\nClasse "
+        + this.firstLetterUp(nameClass)
+        + " adicionada com sucesso!"
+      );
+      this.returnClasses(insertedClass);
+    }
+  };
 
-  // public void updateClass(
-  //   int id,
-  //   String nameClass,
-  //   String functionClass
-  // ) throws FileNotFoundException, IOException {
-  //   ArrayList<Map<String, String>> updatedClass = this.classesService.updateClass(
-  //     id,
-  //     nameClass,
-  //     functionClass
-  //   );
-  //   if (updatedClass.size() == 0) { 
-  //     System.out.println("\nA classe de id " + id + " não foi encontrada na base de dados!\n");
-  //   } else {
-  //     System.out.println(
-  //       "\nClasse "
-  //       + this.firstLetterUp(nameClass)
-  //       + " atualizada com sucesso!"
-  //     );
-  //     this.returnClasses(updatedClass);
-  //   }
-  // }
+  public void updateClass(
+    int id,
+    String nameClass,
+    String functionClass,
+    ArrayList<String> weapons,
+    ArrayList<String> armors,
+    boolean overrideWeapons,
+    boolean overrideArmors
+  ) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> updatedClass = this.classesService.updateClass(
+      id,
+      nameClass,
+      functionClass,
+      weapons,
+      armors,
+      overrideWeapons,
+      overrideArmors
+    );
+    if (updatedClass.size() == 0) { 
+      System.out.println("\nA classe de id " + id + " não foi encontrada na base de dados!\n");
+    } else {
+      System.out.println(
+        "\nClasse "
+        + this.firstLetterUp(nameClass)
+        + " atualizada com sucesso!"
+      );
+      this.returnClasses(updatedClass);
+    }
+  }
 
   // public void removeClass(String nameClass) throws FileNotFoundException, IOException {
   //   boolean removedClass = this.classesService.removeClass(nameClass);

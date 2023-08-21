@@ -89,6 +89,7 @@ public class WeaponClassesModel {
     try {
       this.connection = ConnectionDB.getConnection();
       for (int i = 0; i < categoryWeapons.size(); i += 1) {
+        System.out.println(categoryWeapons.get(i));
         this.prepStatement = this.connection.prepareStatement(
           "SELECT id "
           + "FROM chroniclesOfArtifacts.categoryWeapons "
@@ -108,8 +109,25 @@ public class WeaponClassesModel {
           );
           this.prepStatement.setInt(1, classId);
           this.prepStatement.setInt(2, this.resultSet.getInt(1));
+          this.prepStatement.executeUpdate();
         }
       }
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  }
+
+  public void removeWeaponClasses(int classId) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      this.prepStatement = this.connection.prepareStatement(
+        "DELETE FROM chroniclesOfArtifacts.weaponClasses "
+        + "WHERE classId = ?",
+        Statement.RETURN_GENERATED_KEYS
+      );
+      this.prepStatement.setInt(1, classId);
+          this.prepStatement.executeUpdate();
     } catch (SQLException e) {
       ConnectionDB.rollbackFunction(this.connection);
       throw new DBException(e.getMessage());
