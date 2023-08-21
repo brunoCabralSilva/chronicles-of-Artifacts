@@ -123,20 +123,20 @@ public class ClassesControl {
     }
   }
 
-  // public void removeClass(String nameClass) throws FileNotFoundException, IOException {
-  //   boolean removedClass = this.classesService.removeClass(nameClass);
-  //   if (!removedClass) { 
-  //     System.out.println(
-  //       "\nA classe "
-  //       + this.firstLetterUp(nameClass)
-  //       + " não foi encontrada na base de dados!\n"
-  //     );
-  //   } else {
-  //     System.out.println(
-  //       "\nClasse "
-  //       + this.firstLetterUp(nameClass)
-  //       + " removida com sucesso!"
-  //     );
-  //   }
-  // }
+  public void removeClass(String nameClass) throws FileNotFoundException, IOException {
+    boolean removedClass = this.classesService.removeClass(nameClass);
+    if (!removedClass) { 
+      System.out.println(
+        "\nA classe "
+        + this.firstLetterUp(nameClass)
+        + " não foi encontrada na base de dados!\n"
+      );
+    } else {
+      System.out.println(
+        "\nClasse "
+        + this.firstLetterUp(nameClass)
+        + " removida com sucesso!"
+      );
+    }
+  }
 }

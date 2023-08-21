@@ -21,16 +21,16 @@ public class App {
     ClassesControl classesControl = new ClassesControl(new ClassesService(new ClassesModel()));
   
     ArrayList<String> weapons = new ArrayList<String>();
-    weapons.add("corpo a corpo superiores");
-    weapons.add("à distância superiores");
+    weapons.add("corpo a corpo militares");
     weapons.add("corpo a corpo simples");
+    weapons.add("à distância simples");
   
     ArrayList<String> armors = new ArrayList<String>();
-    armors.add("corselete");
+    armors.add("traje");
 
     // classesControl.getAllClasses();
     // classesControl.insertClass("vingador", "agressor", weapons, armors);
-    classesControl.updateClass(25, "vingador 2", "agressor 2", weapons, armors, true, true);
+    // classesControl.updateClass(26, "vingador 2", "agressor 2", weapons, armors, false, false);
     // classesControl.removeClass("vingador");
 
     // WeaponsControl weaponsControl = new WeaponsControl(new WeaponsService(new WeaponsModel()));

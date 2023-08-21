@@ -157,15 +157,16 @@ public class ClassesModel {
     } 
   };
 
-  public boolean removeClass(String nameClass) throws FileNotFoundException, IOException {
+  public boolean removeClass(int id, String nameClass) throws FileNotFoundException, IOException {
     this.connection = ConnectionDB.getConnection();
     try {
       this.connection.setAutoCommit(false);
       this.prepStatement = this.connection.prepareStatement("SET SQL_SAFE_UPDATES = 0");
-      // this.weaponsPropertiesModel.removeWeaponProperties("weaponId", (int) item.get(0).get("id"));
+      this.weaponClassesModel.removeWeaponClasses(id);
+      this.armorClassesModel.removeArmorClasses(id);
       this.prepStatement = this.connection.prepareStatement(
         "DELETE FROM chroniclesOfArtifacts.classes "
-        + "WHERE class = ? ",
+        + "WHERE nameClass = ? ",
         Statement.RETURN_GENERATED_KEYS
       );
       this.prepStatement.setString(1, nameClass);

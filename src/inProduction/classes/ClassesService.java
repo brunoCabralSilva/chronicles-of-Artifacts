@@ -68,19 +68,19 @@ public class ClassesService {
     throw new DBException("Ocorreu um erro ao tentar atualizar a classe de id " + id + ". Por favor, tente novamente.");
   }
 
-  // public boolean removeClass(String nameClass) throws FileNotFoundException, IOException {
-  //   TreeMap<String, Object> item = this.classesModel.getOneClass(nameClass);
+  public boolean removeClass(String nameClass) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> item = this.classesModel.getClasses(nameClass);
     
-  //   if ( item == null) {
-  //     return false;
-  //   }
+    if (item.size() == 0 || item == null) {
+      return false;
+    }
 
-  //   if (this.classesModel.removeClass(nameClass)){
-  //     TreeMap<String, Object> itemRemoved = this.classesModel.getOneClass(nameClass);
-  //     if (itemRemoved == null) {
-  //       return true;
-  //     }
-  //   }
-  //   throw new DBException("Ocorreu um erro ao tentar remover a classe  " + nameClass + ". Por favor, tente novamente"); 
-  // }
+    if (this.classesModel.removeClass((int)item.get(0).get("id"), nameClass)){
+      ArrayList<Map<String, Object>> itemRemoved = this.classesModel.getClasses(nameClass);
+      if (itemRemoved == null || itemRemoved.size() == 0) {
+        return true;
+      }
+    }
+    throw new DBException("Ocorreu um erro ao tentar remover a classe  " + nameClass + ". Por favor, tente novamente"); 
+  }
 }

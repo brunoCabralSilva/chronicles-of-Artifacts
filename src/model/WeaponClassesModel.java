@@ -85,31 +85,42 @@ public class WeaponClassesModel {
     }
   };
 
-  public void insertWeaponClass(ArrayList<String> categoryWeapons, int classId) throws FileNotFoundException, IOException {
+  public void insertWeaponClass(ArrayList<String> weapons, int classId) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
-      for (int i = 0; i < categoryWeapons.size(); i += 1) {
-        System.out.println(categoryWeapons.get(i));
+      for (int i = 0; i < weapons.size(); i += 1) {
         this.prepStatement = this.connection.prepareStatement(
-          "SELECT id "
-          + "FROM chroniclesOfArtifacts.categoryWeapons "
-          + "WHERE categoryWeapon = ?",
+          "SELECT id from chroniclesOfArtifacts.categoryWeapons "
+          + "WHERE categoryWeapon = ?;"
+        );
+        this.prepStatement.setString(1, weapons.get(i));
+        this.resultSet = this.prepStatement.executeQuery();
+        int weaponId = 0;
+        if (this.resultSet.next()) {
+          weaponId = this.resultSet.getInt("id");
+        };
+        this.prepStatement = this.connection.prepareStatement(
+          "SELECT * FROM chroniclesOfArtifacts.weaponClasses "
+          + "WHERE classId = ? AND catWeaponId = ?",
           Statement.RETURN_GENERATED_KEYS
         );
-
-        this.prepStatement.setString(1, categoryWeapons.get(i));
-        this.resultSet = this.prepStatement.executeQuery();
-
-        if (this.resultSet.next()) {
-          this.prepStatement = this.connection.prepareStatement(
-            "INSERT INTO chroniclesOfArtifacts.weaponClasses "
-            + "(classId, catWeaponId) "
-            + "VALUES(?, ?)",
-            Statement.RETURN_GENERATED_KEYS
-          );
-          this.prepStatement.setInt(1, classId);
-          this.prepStatement.setInt(2, this.resultSet.getInt(1));
-          this.prepStatement.executeUpdate();
+        this.prepStatement.setInt(1, classId);
+        this.prepStatement.setInt(2, weaponId);
+        ResultSet result = this.prepStatement.executeQuery();
+        boolean resultBoolean = result.next();
+        if (!resultBoolean) {
+          if (weaponId > 0) {
+            System.out.println("aqui");
+            this.prepStatement = this.connection.prepareStatement(
+              "INSERT INTO chroniclesOfArtifacts.weaponClasses "
+              + "(classId, catWeaponId) "
+              + "VALUES(?, ?)",
+              Statement.RETURN_GENERATED_KEYS
+            );
+            this.prepStatement.setInt(1, classId);
+            this.prepStatement.setInt(2, weaponId);
+            this.prepStatement.executeUpdate();
+          }
         }
       }
     } catch (SQLException e) {

@@ -96,7 +96,7 @@ public class ArmorClassesModel {
       for (int i = 0; i < armors.size(); i += 1) {
         this.prepStatement = this.connection.prepareStatement(
           "SELECT id from chroniclesOfArtifacts.categoryArmors "
-          + "WHERE categoryArmor = ?;"
+          + "WHERE typeArmor = ?;"
         );
         this.prepStatement.setString(1, armors.get(i));
         this.resultSet = this.prepStatement.executeQuery();
@@ -114,7 +114,8 @@ public class ArmorClassesModel {
         ResultSet result = this.prepStatement.executeQuery();
         boolean resultBoolean = result.next();
         if (!resultBoolean) {
-          if (this.resultSet.next()) {
+          if (armorId > 0) {
+            System.out.println("aqui");
             this.prepStatement = this.connection.prepareStatement(
               "INSERT INTO chroniclesOfArtifacts.armorClasses "
               + "(classId, catArmorId) "

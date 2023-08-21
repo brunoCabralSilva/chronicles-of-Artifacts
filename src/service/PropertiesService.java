@@ -24,8 +24,6 @@ public class PropertiesService {
     
     ArrayList<Map<String, Object>> item = this.propertiesModel.getProperties(property);
 
-    System.out.println(item);
-
     if (item.size() > 0) {
       return new ArrayList<Map<String, Object>>();
     }
@@ -72,7 +70,6 @@ public class PropertiesService {
       )
     ) {
       ArrayList<Map<String, Object>> itemRemoved = this.propertiesModel.getProperties(property);
-      System.out.println(itemRemoved);
       if (itemRemoved == null || itemRemoved.size() == 0) {
         return true;
       }
