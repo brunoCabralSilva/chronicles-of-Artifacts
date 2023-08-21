@@ -68,9 +68,11 @@ public class WeaponPropertiesModel {
       this.connection.setAutoCommit(false);
       for (String property : listProperties) {
         ArrayList<Map<String, Object>> propertyId = propertiesModel.getProperties(property);
-        if (propertyId == null) {
+        if (propertyId == null || propertyId.size() == 0) {
+          TreeMap<String, Object> properties = new TreeMap<String, Object>();
+          properties.put("id", propertiesModel.insertProperty(property));
           propertyId = new ArrayList<Map<String, Object>>();
-          propertyId.get(0).put("id", propertiesModel.insertProperty(property));
+          propertyId.add(properties);
         }
 
         this.prepStatement = this.connection.prepareStatement(

@@ -35,7 +35,7 @@ public class WeaponsControl {
         + "\nArma: "
         + this.firstLetterUp((String) listWeapons.get(i).get("weapon"))
         + "\nCategoria: "
-        + this.firstLetterUp((String) listWeapons.get(i).get("categoryWeapon"))
+        + this.firstLetterUp((String) listWeapons.get(i).get("category"))
         + "\nProficiência: "
         + listWeapons.get(i).get("proficiency")
         + "\nDano: "

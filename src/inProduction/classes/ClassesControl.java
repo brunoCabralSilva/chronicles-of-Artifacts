@@ -26,7 +26,7 @@ public class ClassesControl {
           Object typeArmor = armorMap.get("typeArmor");
           Object categoryArmor = armorMap.get("categoryArmor");
           if (typeArmor instanceof String && categoryArmor instanceof String) {
-              newList.add(typeArmor + " - " + categoryArmor);
+              newList.add(typeArmor + " (" + categoryArmor + ")");
           }
         }
       }

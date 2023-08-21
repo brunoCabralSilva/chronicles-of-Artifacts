@@ -27,6 +27,24 @@ public class WeaponsModel {
     this.weaponsPropertiesModel = new WeaponPropertiesModel();
   }
 
+  public int findCategoryByName(String category) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      this.prepStatement = this.connection.prepareStatement(
+        "SELECT id FROM chroniclesOfArtifacts.categoryWeapons "
+        + "WHERE categoryWeapon = ?;",
+        Statement.RETURN_GENERATED_KEYS
+      );
+      this.prepStatement.setString(1, category);
+      this.resultSet = this.prepStatement.executeQuery();
+      if (this.resultSet.next()) {
+        return this.resultSet.getInt("id");
+      } return 0;
+    } catch (SQLException e) {
+      throw new DBException(e.getMessage());
+    }
+  }
+
   public ArrayList<Map<String, Object>> getWeapons(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
@@ -49,16 +67,28 @@ public class WeaponsModel {
       
       while (this.resultSet.next()) {
         ArrayList<String> property = this.weaponsPropertiesModel.weaponPropertiesByWeapon((String) this.resultSet.getString("weapon"));
-        
+
+        this.prepStatement = this.connection.prepareStatement(
+          "SELECT cw.categoryWeapon "
+          + "FROM chroniclesOfArtifacts.categoryWeapons cw "
+          + "INNER JOIN chroniclesOfArtifacts.weapons w "
+          + "ON cw.id = w.category "
+          + "WHERE cw.id = ?;",
+          Statement.RETURN_GENERATED_KEYS
+        );
+        this.prepStatement.setString(1, this.resultSet.getString("category"));
+        ResultSet categoryWeapon = this.prepStatement.executeQuery();
+        categoryWeapon.next();
+       
         TreeMap<String, Object> weaponMap = new TreeMap<>();
         weaponMap.put("id", this.resultSet.getInt("id"));
         weaponMap.put("weapon", this.resultSet.getString("weapon"));
-        weaponMap.put("categoryWeapon", this.resultSet.getString("categoryWeapon"));
         weaponMap.put("proficiency", this.resultSet.getInt("proficiency"));
         weaponMap.put("damage", this.resultSet.getString("damage"));
         weaponMap.put("rangeWeapon", this.resultSet.getString("rangeWeapon"));
         weaponMap.put("numberOfHands", this.resultSet.getInt("numberOfHands"));
         weaponMap.put("properties", property);
+        weaponMap.put("category", categoryWeapon.getString("categoryWeapon"));
         weapons.add(weaponMap);
       }
       return weapons;
@@ -69,7 +99,7 @@ public class WeaponsModel {
 
   public int insertWeapon(
     String weapon,
-    String categoryWeapon,
+    String category,
     int proficiency,
     String damage,
     String rangeWeapon,
@@ -79,14 +109,18 @@ public class WeaponsModel {
     try {
       this.connection = ConnectionDB.getConnection();
       this.connection.setAutoCommit(false);
+      int categoryWeapon = findCategoryByName(category.toLowerCase());
+      if (categoryWeapon == 0) {
+        throw new DBException("A Categoria de Arma não foi encontrada.");
+      }
       this.prepStatement = this.connection.prepareStatement(
         "INSERT INTO chroniclesOfArtifacts.weapons "
-        + "(weapon, categoryWeapon, proficiency, damage, rangeWeapon, numberOfHands) "
+        + "(weapon, category, proficiency, damage, rangeWeapon, numberOfHands) "
         + "VALUES (?, ?, ?, ?, ?, ?)",
         Statement.RETURN_GENERATED_KEYS
       );
       this.prepStatement.setString(1, weapon.toLowerCase());
-      this.prepStatement.setString(2, categoryWeapon.toLowerCase());
+      this.prepStatement.setInt(2, categoryWeapon);
       this.prepStatement.setInt(3, proficiency);
       this.prepStatement.setString(4, damage.toLowerCase());
       this.prepStatement.setString(5, rangeWeapon.toLowerCase());
@@ -111,7 +145,7 @@ public class WeaponsModel {
   public boolean updateWeapon(
     int id,
     String weapon,
-    String categoryWeapon,
+    String category,
     int proficiency,
     String damage,
     String rangeWeapon,
@@ -122,14 +156,18 @@ public class WeaponsModel {
     this.connection = ConnectionDB.getConnection();
     try {
       this.connection.setAutoCommit(false);
+      int categoryWeapon = findCategoryByName(category.toLowerCase());
+      if (categoryWeapon == 0) {
+        throw new DBException("A Categoria de Arma não foi encontrada.");
+      }
       this.prepStatement = this.connection.prepareStatement(
         "UPDATE chroniclesOfArtifacts.weapons "
-        + "SET weapon = ?, categoryWeapon = ?, proficiency = ?, damage = ?, rangeWeapon = ?, numberOfHands = ?"
+        + "SET weapon = ?, category = ?, proficiency = ?, damage = ?, rangeWeapon = ?, numberOfHands = ?"
         + " WHERE id = ?",
         Statement.RETURN_GENERATED_KEYS
       );
       this.prepStatement.setString(1, weapon.toLowerCase());
-      this.prepStatement.setString(2, categoryWeapon.toLowerCase());
+      this.prepStatement.setInt(2, categoryWeapon);
       this.prepStatement.setInt(3, proficiency);
       this.prepStatement.setString(4, damage.toLowerCase());
       this.prepStatement.setString(5, rangeWeapon.toLowerCase());
@@ -143,6 +181,8 @@ public class WeaponsModel {
         } else {
           this.weaponsPropertiesModel.insertWeaponProperties(id, properties);
         }
+      } else {
+        this.weaponsPropertiesModel.removeWeaponProperties("weaponId", id);
       }
       this.connection.commit();
       return true;
