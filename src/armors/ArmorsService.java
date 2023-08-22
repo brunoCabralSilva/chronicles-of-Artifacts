@@ -1,4 +1,4 @@
-package inProduction.armors;
+package armors;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,11 +16,11 @@ public class ArmorsService {
     this.armorsModel = armorsModel;
   }
 
-  public ArrayList<Map<String, String>> getAllArmors() throws FileNotFoundException, IOException {
-    return this.armorsModel.getAllArmors();
+  public ArrayList<Map<String, Object>> getAllArmors() throws FileNotFoundException, IOException {
+    return this.armorsModel.getArmors("all");
   }
 
-  public ArrayList<Map<String, String>> insertArmor(
+  public ArrayList<Map<String, Object>> insertArmor(
     String armor,
     int ca,
     int penalty,
@@ -28,10 +28,10 @@ public class ArmorsService {
     int category
   ) throws FileNotFoundException, IOException {
     
-    TreeMap<String, String> item = this.armorsModel.getArmor(armor);
+    TreeMap<String, Object> item = this.armorsModel.getArmors(armor);
 
     if (item != null) {
-      return new ArrayList<Map<String, String>>();
+      return new ArrayList<Map<String, Object>>();
     } 
     boolean registerArmor = this.armorsModel.insertArmor(
       armor,
@@ -42,8 +42,8 @@ public class ArmorsService {
     );
 
     if (registerArmor) {
-      TreeMap<String, String> registeredArmor = this.armorsModel.getArmor(armor);
-      ArrayList<Map<String, String>> listArmors = new ArrayList<Map<String, String>>();
+      TreeMap<String, Object> registeredArmor = this.armorsModel.getArmors(armor);
+      ArrayList<Map<String, Object>> listArmors = new ArrayList<Map<String, Object>>();
       listArmors.add(registeredArmor);
       return listArmors;
     }
@@ -51,7 +51,7 @@ public class ArmorsService {
     throw new DBException("Ocorreu um erro ao tentar inserir a armadura " + armor + ". Por favor, tente novamente.");
   };
 
-  public ArrayList<Map<String, String>> updateArmor(
+  public ArrayList<Map<String, Object>> updateArmor(
     int id,
     String armor,
     int ca,
@@ -60,10 +60,10 @@ public class ArmorsService {
     int category
   ) throws FileNotFoundException, IOException {
 
-    TreeMap<String, String> item = this.armorsModel.getArmor(id);
+    TreeMap<String, Object> item = this.armorsModel.getArmors(id);
     
     if ( item == null) {
-      return new ArrayList<Map<String, String>>();
+      return new ArrayList<Map<String, Object>>();
     }
 
     boolean updateArmor = this.armorsModel.updateArmor(
@@ -76,8 +76,8 @@ public class ArmorsService {
     );
 
     if (updateArmor) {
-      TreeMap<String, String> updatedArmor = this.armorsModel.getArmor(armor);
-      ArrayList<Map<String, String>> listArmors = new ArrayList<Map<String, String>>();
+      TreeMap<String, Object> updatedArmor = this.armorsModel.getArmors(armor);
+      ArrayList<Map<String, Object>> listArmors = new ArrayList<Map<String, Object>>();
       listArmors.add(updatedArmor);
       return listArmors;
     }
@@ -86,14 +86,14 @@ public class ArmorsService {
   }
 
   public boolean removeArmor(String armor) throws FileNotFoundException, IOException {
-    TreeMap<String, String> item = this.armorsModel.getArmor(armor);
+    TreeMap<String, Object> item = this.armorsModel.getArmors(armor);
     
     if ( item == null) {
       return false;
     }
 
     if (this.armorsModel.removeArmor(armor)){
-      TreeMap<String, String> itemRemoved = this.armorsModel.getArmor(armor);
+      TreeMap<String, Object> itemRemoved = this.armorsModel.getArmors(armor);
       if (itemRemoved == null) {
         return true;
       }

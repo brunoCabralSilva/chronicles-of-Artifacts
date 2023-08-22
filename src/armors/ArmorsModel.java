@@ -1,4 +1,4 @@
-package inProduction.armors;
+package armors;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -27,11 +27,15 @@ public class ArmorsModel {
     this.prepStatement = null;
   }
 
-  public TreeMap<String, String> getArmor(Object data) throws FileNotFoundException, IOException {
+  public ArrayList<Map<String, Object>> getArmors(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.statement = this.connection.createStatement();
-      if (!data.getClass().getSimpleName().equals("String")) {
+      if (data == "all") {
+        this.resultSet = this.statement.executeQuery(
+          "SELECT * FROM chroniclesOfArtifacts.armors"
+        );
+      } else if (!data.getClass().getSimpleName().equals("String")) {
         this.prepStatement = this.connection.prepareStatement(
         "SELECT * FROM chroniclesOfArtifacts.armors WHERE id = ?"
         );
@@ -43,14 +47,15 @@ public class ArmorsModel {
         this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
       this.resultSet = this.prepStatement.executeQuery();
+      ArrayList<Map<String, Object>> armorMap = new ArrayList<Map<String, Object>>();
       while (this.resultSet.next()) {
-        TreeMap<String, String> armorMap = new TreeMap<String, String>();
-        armorMap.put("id", this.resultSet.getString(1));
-        armorMap.put("armor", this.resultSet.getString(2));
-        armorMap.put("ca", this.resultSet.getString(3));
-        armorMap.put("penalty", this.resultSet.getString(4));
-        armorMap.put("displacement", this.resultSet.getString(5));
-        armorMap.put("category", this.resultSet.getString(6));
+        TreeMap<String, Object> line = new TreeMap<String, Object>();
+        line.put("id", this.resultSet.getString(1));
+        line.put("armor", this.resultSet.getString(2));
+        line.put("ca", this.resultSet.getString(3));
+        line.put("penalty", this.resultSet.getString(4));
+        line.put("displacement", this.resultSet.getString(5));
+        line.put("category", this.resultSet.getString(6));
         return armorMap;
       }
       return null;
@@ -58,30 +63,6 @@ public class ArmorsModel {
       throw new DBException(e.getMessage());
     }
   };
-
-  public ArrayList<Map<String, String>> getAllArmors() throws FileNotFoundException, IOException {
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      this.resultSet = this.statement.executeQuery(
-        "SELECT * FROM chroniclesOfArtifacts.armors"
-      );
-      ArrayList<Map<String, String>> listArmors = new ArrayList<Map<String, String>>();
-      while(this.resultSet.next()) {
-        TreeMap<String, String> line = new TreeMap<String, String>();
-        line.put("id", this.resultSet.getString("id"));
-        line.put("armor", this.resultSet.getString("armor"));
-        line.put("ca", this.resultSet.getString("ca"));
-        line.put("penalty", this.resultSet.getString("penalty"));
-        line.put("displacement", this.resultSet.getString("displacement"));
-        line.put("category", this.resultSet.getString("category"));
-        listArmors.add(line);
-      }
-      return listArmors;
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
-    }
-  }
 
   public boolean insertArmor(
     String armor,

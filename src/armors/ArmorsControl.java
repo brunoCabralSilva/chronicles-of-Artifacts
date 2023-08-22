@@ -1,4 +1,4 @@
-package inProduction.armors;
+package armors;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,31 +16,31 @@ public class ArmorsControl {
     return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
   }
 
-  private void returnArmors(ArrayList<Map<String, String>> listArmors) {
+  private void returnArmors(ArrayList<Map<String, Object>> listArmors) {
     int i = 0; 
     while(i < listArmors.size()) {
-        System.out.println(
-          "\n"
-          + "ID: "
-          + listArmors.get(i).get("id")
-          + "\nArmadura: "
-          + this.firstLetterUp(listArmors.get(i).get("armor"))
-          + "\nBônus de CA: "
-          + listArmors.get(i).get("ca")
-          + "\nPenalidade: "
-          + listArmors.get(i).get("penalty")
-          + "\nDeslocamento: "
-          + listArmors.get(i).get("displacement")
-          + "\nCategoria: "
-          + listArmors.get(i).get("category")
-          + "\n"
-        );
+      System.out.println(
+        "\n"
+        + "ID: "
+        + listArmors.get(i).get("id")
+        + "\nArmadura: "
+        + this.firstLetterUp(listArmors.get(i).get("armor"))
+        + "\nBônus de CA: "
+        + listArmors.get(i).get("ca")
+        + "\nPenalidade: "
+        + listArmors.get(i).get("penalty")
+        + "\nDeslocamento: "
+        + listArmors.get(i).get("displacement")
+        + "\nCategoria: "
+        + listArmors.get(i).get("category")
+        + "\n"
+      );
       i += 1;
     }
   }
 
   public void getAllArmors() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> allArmors = this.armorsService.getAllArmors();
+    ArrayList<Map<String, Object>> allArmors = this.armorsService.getAllArmors();
     if (allArmors.size() == 0 ) {
       System.out.println("\nNão foram encontradas Armaduras registradas no banco de dados!\n");
     } else {
@@ -55,7 +55,7 @@ public class ArmorsControl {
     int displacement,
     int category
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> insertedArmor = this.armorsService.insertArmor(
+    ArrayList<Map<String, Object>> insertedArmor = this.armorsService.insertArmor(
       armor,
       ca,
       penalty,
@@ -86,7 +86,7 @@ public class ArmorsControl {
     int displacement,
     int category
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> updatedArmor = this.armorsService.updateArmor(
+    ArrayList<Map<String, Object>> updatedArmor = this.armorsService.updateArmor(
       id,
       armor,
       ca,
