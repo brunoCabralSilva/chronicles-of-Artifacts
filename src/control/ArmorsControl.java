@@ -10,8 +10,8 @@ import service.ArmorsService;
 public class ArmorsControl {
   ArmorsService armorsService = null;
 
-  public ArmorsControl(ArmorsService armorsService) {
-    this.armorsService = armorsService;
+  public ArmorsControl() {
+    this.armorsService = new ArmorsService();
   }
 
   public String firstLetterUp(String word) {
@@ -40,6 +40,37 @@ public class ArmorsControl {
         + "\n"
       );
       i += 1;
+    }
+  }
+
+  private void returnDataArmors(ArrayList<Map<String, Object>> listArmors) {
+    int i = 0; 
+    while(i < listArmors.size()) {
+      System.out.println(
+        "\nArmadura: "
+        + this.firstLetterUp((String) listArmors.get(i).get("armor"))
+        + "\nBônus de CA: "
+        + listArmors.get(i).get("ca")
+        + "\nPenalidade da Armadura: "
+        + listArmors.get(i).get("penalty")
+        + "\nDeslocamento: "
+        + listArmors.get(i).get("displacement")
+        + "\nTipo: "
+        + this.firstLetterUp((String) listArmors.get(i).get("type"))
+        + "\nCategoria: "
+        + this.firstLetterUp((String) listArmors.get(i).get("category"))
+        + "\n"
+      );
+      i += 1;
+    }
+  }
+
+  public void getArmorsByName(String nameArmor) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allArmors = this.armorsService.getArmorsByName(nameArmor);
+    if (allArmors.size() == 0 ) {
+      System.out.println("\nNão foram encontradas Armaduras registradas no banco de dados!\n");
+    } else {
+      this.returnDataArmors(allArmors);
     }
   }
 

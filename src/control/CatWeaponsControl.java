@@ -10,8 +10,8 @@ import service.CatWeaponsService;
 public class CatWeaponsControl {
   CatWeaponsService catWeaponsService = null;
 
-  public CatWeaponsControl(CatWeaponsService catWeaponsService) {
-    this.catWeaponsService = catWeaponsService;
+  public CatWeaponsControl() {
+    this.catWeaponsService = new CatWeaponsService();
   }
 
   public String firstLetterUp(String word) {

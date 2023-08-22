@@ -77,8 +77,8 @@ CREATE TABLE IF NOT EXISTS artifactWeapons(
     skill VARCHAR(255) NOT NULL,
     price FLOAT NOT NULL,
     weightWeapon FLOAT NOT NULL,
-    bonusAtk INT NOT NULL,
-    bonusDamage INT NOT NULL,
+    bonusAtk VARCHAR(50) NOT NULL,
+    bonusDamage VARCHAR(50) NOT NULL,
     registerDate DATETIME NOT NULL,
     FOREIGN KEY (typeWeapon) REFERENCES weapons(id)
 );
@@ -91,7 +91,7 @@ CREATE TABLE IF NOT EXISTS artifactArmors(
     skill VARCHAR(255) NOT NULL,
     price FLOAT NOT NULL,
     weightArmor FLOAT NOT NULL,
-    bonusDefense INT NOT NULL,
+    bonusDefense VARCHAR(50) NOT NULL,
     registerDate DATETIME NOT NULL,
     FOREIGN KEY (typeArmor) REFERENCES armors(id)
 );

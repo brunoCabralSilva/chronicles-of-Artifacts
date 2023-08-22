@@ -12,8 +12,8 @@ import model.PropertiesModel;
 public class PropertiesService {
   PropertiesModel propertiesModel = null;
 
-  public PropertiesService(PropertiesModel propertiesModel) {
-    this.propertiesModel = propertiesModel;
+  public PropertiesService() {
+    this.propertiesModel = new PropertiesModel();
   }
 
   public ArrayList<Map<String, Object>> getProperties() throws FileNotFoundException, IOException {

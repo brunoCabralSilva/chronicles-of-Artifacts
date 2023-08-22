@@ -12,12 +12,21 @@ import model.ArmorsModel;
 public class ArmorsService {
   ArmorsModel armorsModel = null;
 
-  public ArmorsService(ArmorsModel armorsModel) {
-    this.armorsModel = armorsModel;
+  public ArmorsService() {
+    this.armorsModel = new ArmorsModel();
   }
 
   public ArrayList<Map<String, Object>> getAllArmors() throws FileNotFoundException, IOException {
     return this.armorsModel.getArmors("all");
+  }
+
+  public ArrayList<Map<String, Object>> getArmorsByName(String nameArmor) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allArmors = this.armorsModel.getArmors(nameArmor);
+    if (allArmors.size() == 0 ) {
+      throw new DBException("Não foram encontradas Armaduras registradas no banco de dados!");
+    } else {
+      return allArmors;
+    }
   }
 
   public ArrayList<Map<String, Object>> insertArmor(

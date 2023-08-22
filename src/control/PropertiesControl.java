@@ -10,8 +10,8 @@ import service.PropertiesService;
 public class PropertiesControl {
   PropertiesService propertiesService = null;
 
-  public PropertiesControl(PropertiesService propertiesService) {
-    this.propertiesService = propertiesService;
+  public PropertiesControl() {
+    this.propertiesService = new PropertiesService();
   }
 
   public String firstLetterUp(Object object) {

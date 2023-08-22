@@ -10,8 +10,8 @@ import service.ClassesService;
 public class ClassesControl {
   ClassesService classesService = null;
 
-  public ClassesControl(ClassesService classesService) {
-    this.classesService = classesService;
+  public ClassesControl() {
+    this.classesService = new ClassesService();
   }
 
   public String firstLetterUp(String word) {

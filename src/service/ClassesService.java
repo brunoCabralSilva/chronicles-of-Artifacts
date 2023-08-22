@@ -12,8 +12,8 @@ import model.ClassesModel;
 public class ClassesService {
   ClassesModel classesModel = null;
 
-  public ClassesService(ClassesModel classesModel) {
-    this.classesModel = classesModel;
+  public ClassesService() {
+    this.classesModel = new ClassesModel();
   }
   public ArrayList<Map<String, Object>> getAllClasses() throws FileNotFoundException, IOException {
     return this.classesModel.getClasses("all");

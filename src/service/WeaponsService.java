@@ -12,12 +12,21 @@ import model.WeaponsModel;
 public class WeaponsService {
   WeaponsModel weaponsModel = null;
 
-  public WeaponsService(WeaponsModel weaponsModel) {
-    this.weaponsModel = weaponsModel;
+  public WeaponsService() {
+    this.weaponsModel = new WeaponsModel();
   }
 
   public ArrayList<Map<String, Object>> getWeapons() throws FileNotFoundException, IOException {
     return this.weaponsModel.getWeapons("all");
+  }
+
+  public ArrayList<Map<String, Object>> getWeaponsByName(String nameWeapon) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allWeapons = this.weaponsModel.getWeapons(nameWeapon);
+    if (allWeapons.size() == 0 ) {
+      throw new DBException("Não foram encontradas Armas registradas no banco de dados!");
+    } else {
+      return allWeapons;
+    }
   }
 
   public ArrayList<Map<String, Object>> insertWeapon(

@@ -12,8 +12,8 @@ import model.CatArmorsModel;
 public class CatArmorsService {
   CatArmorsModel catArmorsModel = null;
 
-  public CatArmorsService(CatArmorsModel catArmorsModel) {
-    this.catArmorsModel = catArmorsModel;
+  public CatArmorsService() {
+    this.catArmorsModel = new CatArmorsModel();
   }
 
   public ArrayList<Map<String, Object>> getAllCatArmors() throws FileNotFoundException, IOException {

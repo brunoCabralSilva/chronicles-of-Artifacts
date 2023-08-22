@@ -10,8 +10,8 @@ import service.WeaponsService;
 public class WeaponsControl {
   WeaponsService weaponsService = null;
 
-  public WeaponsControl(WeaponsService weaponsService) {
-    this.weaponsService = weaponsService;
+  public WeaponsControl() {
+    this.weaponsService = new WeaponsService();
   }
 
   public String firstLetterUp(String word) {
@@ -49,6 +49,46 @@ public class WeaponsControl {
         + properties
       );
       i += 1;
+    }
+  }
+
+  private void returnDataWeapons(ArrayList<Map<String, Object>> listWeapons) {
+    int i = 0; 
+    while(i < listWeapons.size()) {
+      ArrayList<?> rawProperties = (ArrayList<?>) listWeapons.get(i).get("properties");
+      ArrayList<String> properties = new ArrayList<>();
+      for (Object item : rawProperties) {
+        if (item instanceof String) {
+            properties.add((String) item);
+        }
+      }
+      System.out.println(
+        "\nArma: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("weapon"))
+        + "\nCategoria: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("category"))
+        + "\nProficiência: "
+        + listWeapons.get(i).get("proficiency")
+        + "\nDano: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("damage"))
+        + "\nAlcance: "
+        + this.firstLetterUp((String) listWeapons.get(i).get("rangeWeapon"))
+        + "\nNúmero de mãos utilizadas: "
+        + listWeapons.get(i).get("numberOfHands")
+        + "\n"
+        + "Propriedades: "
+        + properties
+      );
+      i += 1;
+    }
+  }
+
+  public void getWeaponsByName(String nameWeapon) throws FileNotFoundException, IOException {
+    ArrayList<Map<String, Object>> allWeapons = this.weaponsService.getWeaponsByName(nameWeapon);
+    if (allWeapons.size() == 0 ) {
+      System.out.println("\nNão foram encontradas Armaduras registradas no banco de dados!\n");
+    } else {
+      this.returnDataWeapons(allWeapons);
     }
   }
 
