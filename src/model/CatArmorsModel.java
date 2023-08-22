@@ -1,4 +1,4 @@
-package inProduction.categoryArmors;
+package model;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -16,22 +16,44 @@ import connection.DBException;
 
 public class CatArmorsModel {
   private Connection connection;
-  private Statement statement;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
 
   public CatArmorsModel() {
     this.connection = null;
-    this.statement = null;
     this.resultSet = null;
     this.prepStatement = null;
   }
 
-  public TreeMap<String, String> getByIdOrType(Object data) throws FileNotFoundException, IOException {
+  private ArrayList<String> getArmorsById(int id) throws FileNotFoundException, IOException {
+    try {
+    ArrayList<String> list = new ArrayList<String>();
+    this.connection = ConnectionDB.getConnection();
+    this.prepStatement = this.connection.prepareStatement(
+      "SELECT armor from chroniclesOfArtifacts.armors "
+      + "WHERE category = ?",
+      Statement.RETURN_GENERATED_KEYS
+    );
+    this.prepStatement.setInt(1, id);
+    ResultSet result = this.prepStatement.executeQuery();
+    while(result.next()) {
+      list.add(result.getString("armor"));
+    }
+    return list;
+    } catch (SQLException e) {
+      throw new DBException(e.getMessage());
+    }
+  };
+
+  public ArrayList<Map<String, Object>> getCatArmors(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      if (!data.getClass().getSimpleName().equals("String")) {
+      if (data == "all") {
+        this.prepStatement = this.connection.prepareStatement(
+        "SELECT * FROM chroniclesOfArtifacts.categoryArmors"
+        );
+      }
+      else if (!data.getClass().getSimpleName().equals("String")) {
         this.prepStatement = this.connection.prepareStatement(
         "SELECT * FROM chroniclesOfArtifacts.categoryArmors WHERE id = ?"
         );
@@ -43,61 +65,20 @@ public class CatArmorsModel {
         this.prepStatement.setString(1, ((String) data).toLowerCase());
       }
       this.resultSet = this.prepStatement.executeQuery();
+      ArrayList<Map<String, Object>> catArmorMap = new ArrayList<Map<String, Object>>();
       while (this.resultSet.next()) {
-        TreeMap<String, String> catArmorMap = new TreeMap<String, String>();
-        catArmorMap.put("id", this.resultSet.getString(1));
-        catArmorMap.put("typeArmor", this.resultSet.getString(2));
-        catArmorMap.put("categoryArmor", this.resultSet.getString(3));
-        return catArmorMap;
+        TreeMap<String, Object> line = new TreeMap<String, Object>();
+        line.put("id", this.resultSet.getInt(1));
+        line.put("typeArmor", this.resultSet.getString(2));
+        line.put("categoryArmor", this.resultSet.getString(3));
+        line.put("armors", this.getArmorsById(this.resultSet.getInt(1)));
+        catArmorMap.add(line);
       }
-      return null;
+      return catArmorMap;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
     }
   };
-
-  public TreeMap<String, String> getByCatArmor(String data) throws FileNotFoundException, IOException {
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      this.prepStatement = this.connection.prepareStatement(
-      "SELECT * FROM chroniclesOfArtifacts.categoryArmors WHERE categoryArmor = ?"
-      );
-      this.prepStatement.setString(1, ((String) data).toLowerCase());
-      this.resultSet = this.prepStatement.executeQuery();
-      while (this.resultSet.next()) {
-        TreeMap<String, String> catArmorMap = new TreeMap<String, String>();
-        catArmorMap.put("id", this.resultSet.getString(1));
-        catArmorMap.put("typeArmor", this.resultSet.getString(2));
-        catArmorMap.put("categoryArmor", this.resultSet.getString(3));
-        return catArmorMap;
-      }
-      return null;
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
-    }
-  };
-
-  public ArrayList<Map<String, String>> getAllCatArmors() throws FileNotFoundException, IOException {
-    try {
-      this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
-      this.resultSet = this.statement.executeQuery(
-        "SELECT * FROM chroniclesOfArtifacts.categoryArmors"
-      );
-      ArrayList<Map<String, String>> listCatArmors = new ArrayList<Map<String, String>>();
-      while(this.resultSet.next()) {
-        TreeMap<String, String> line = new TreeMap<String, String>();
-        line.put("id", this.resultSet.getString("id"));
-        line.put("typeArmor", this.resultSet.getString("typeArmor"));
-        line.put("categoryArmor", this.resultSet.getString("categoryArmor"));
-        listCatArmors.add(line);
-      }
-      return listCatArmors;
-    } catch (SQLException e) {
-      throw new DBException(e.getMessage());
-    }
-  }
 
   public boolean insertCatArmor(
     String typeArmor,

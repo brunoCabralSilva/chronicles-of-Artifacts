@@ -1,9 +1,11 @@
-package inProduction.categoryArmors;
+package control;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+
+import service.CatArmorsService;
 
 public class CatArmorsControl {
   CatArmorsService catArmorssService = null;
@@ -16,37 +18,39 @@ public class CatArmorsControl {
     return word.substring(0, 1).toUpperCase() + word.substring(1).toLowerCase();
   }
   
-  private void returnCatArmors(ArrayList<Map<String, String>> listWeapons) {
+  private void returnCatArmors(ArrayList<Map<String, Object>> listArmors) {
     int i = 0;
-    while(i < listWeapons.size()) {
-        System.out.println(
-          "\n"
-          + "ID: "
-          + listWeapons.get(i).get("id")
-          + "\nTipo: "
-          + this.firstLetterUp(listWeapons.get(i).get("typeArmor"))
-          + "\nCategoria: "
-          + this.firstLetterUp(listWeapons.get(i).get("categoryArmor"))
-          + "\n"
-        );
+    while(i < listArmors.size()) {
+      System.out.println(
+        "\n"
+        + "ID: "
+        + listArmors.get(i).get("id")
+        + "\nTipo: "
+        + this.firstLetterUp((String) listArmors.get(i).get("typeArmor"))
+        + "\nCategoria: "
+        + this.firstLetterUp((String) listArmors.get(i).get("categoryArmor"))
+        + "\n"
+        + "Armaduras relacionadas: "
+        + listArmors.get(i).get("armors")
+      );
       i += 1;
     }
   }
 
   public void getAllCatArmors() throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> catArmors = this.catArmorssService.getAllCatArmors();
+    ArrayList<Map<String, Object>> catArmors = this.catArmorssService.getAllCatArmors();
     if (catArmors.size() == 0 ) {
-      System.out.println("\nNão foram encontradas Categirias de Arma registradas no banco de dados!\n");
+      System.out.println("\nNão foram encontradas Categorias de Armadura registradas no banco de dados!\n");
     } else {
       this.returnCatArmors(catArmors);
     }
-  }
+  };
 
   public void insertCatArmor(
     String typeArmor,
     String categoryArmor
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> insertedCatArmor = this.catArmorssService.insertCatArmor(
+    ArrayList<Map<String, Object>> insertedCatArmor = this.catArmorssService.insertCatArmor(
       typeArmor,
       categoryArmor
     );
@@ -72,7 +76,7 @@ public class CatArmorsControl {
     String typeArmor,
     String categoryArmor
   ) throws FileNotFoundException, IOException {
-    ArrayList<Map<String, String>> updatedCatArmor = this.catArmorssService.updateCatArmor(
+    ArrayList<Map<String, Object>> updatedCatArmor = this.catArmorssService.updateCatArmor(
       id,
       typeArmor,
       categoryArmor
@@ -81,7 +85,7 @@ public class CatArmorsControl {
       System.out.println("\nA Categoria de Armadura de id " + id + " não foi encontrada na base de dados!\n");
     } else {
       System.out.println(
-        "\nArma "
+        "\nArmadura "
         + this.firstLetterUp(typeArmor)
         + " atualizada com sucesso!"
       );
@@ -90,8 +94,8 @@ public class CatArmorsControl {
   }
 
   public void removeCatArmor(String typeArmor) throws FileNotFoundException, IOException {
-    boolean removedWeapon = this.catArmorssService.removeCatArmor(typeArmor);
-    if (!removedWeapon) { 
+    boolean removedArmor = this.catArmorssService.removeCatArmor(typeArmor);
+    if (!removedArmor) { 
       System.out.println(
         "\nA Categoria de Armadura "
         + this.firstLetterUp(typeArmor)

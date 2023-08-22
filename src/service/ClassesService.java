@@ -1,4 +1,4 @@
-package inProduction.classes;
+package service;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -7,6 +7,7 @@ import java.util.Map;
 
 import connection.ConnectionDB;
 import connection.DBException;
+import model.ClassesModel;
 
 public class ClassesService {
   ClassesModel classesModel = null;

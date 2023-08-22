@@ -52,7 +52,7 @@ public class PropertiesModel {
       while (this.resultSet.next()) {
         TreeMap<String, Object> line = new TreeMap<String, Object>();
         ArrayList<String> properties = this.weaponsPropertiesModel.weaponPropertiesByProp(Integer.parseInt(this.resultSet.getString("id")));
-        line.put("id", this.resultSet.getString("id"));
+        line.put("id", this.resultSet.getInt("id"));
         line.put("property", this.resultSet.getString("property"));
         line.put("weapons", properties);
         listProperties.add(line);
