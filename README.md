@@ -26,7 +26,7 @@ Sinta-se à vontade para explorar o projeto, contribuir e usá-lo como inspiraç
 
 ## Relacionamentos do Banco de Dados Chronicles of Artifacts
 
-A seguir, estão os relacionamentos entre as tabelas do banco de dados Chronicles of Artifacts. Cada tabela descreve um aspecto importante do mundo de RPG que está sendo gerenciado pela aplicação.
+A seguir, a descrição das tabelas presentes no banco de dados e como elas se relacionam umas com as outras. Cada tabela armazena informações específicas sobre diferentes aspectos do jogo de RPG, e os relacionamentos entre as tabelas permitem construir um sistema complexo e interligado de classes, armas, armaduras e artefatos.
 
 <div align="center">
   <img align="center" src="./src/images/schema.png" alt= "Esquema do Banco de dados do projeto" />
@@ -34,27 +34,98 @@ A seguir, estão os relacionamentos entre as tabelas do banco de dados Chronicle
 
 1. **Tabela `classes`**: Armazena informações sobre as classes de personagens no jogo de RPG.
 
+    - `id`: Identificador único da classe.
+    - `nameClass`: Nome da classe (ex: guerreiro, mago, clérigo).
+    - `functionClass`: Função ou papel da classe (ex: agressor, defensor, líder).
+
 2. **Tabela `categoryArmors`**: Armazena informações sobre as categorias de armaduras.
+
+    - `id`: Identificador único da categoria.
+    - `typeArmor`: Tipo de armadura (ex: corselete, brunea).
+    - `categoryArmor`: Categoria da armadura (ex: leve, pesada).
 
 3. **Tabela `categoryWeapons`**: Armazena informações sobre as categorias de armas.
 
+    - `id`: Identificador único da categoria.
+    - `categoryWeapon`: Categoria da arma (ex: corpo a corpo simples, à distância militar).
+
 4. **Tabela `properties`**: Armazena informações sobre as propriedades das armas.
 
-5. **Tabela `weapons`**: Armazena informações sobre as armas disponíveis no jogo. Relaciona-se com a tabela `categoryWeapons`.
+    - `id`: Identificador único da propriedade.
+    - `property`: Nome da propriedade (ex: alcance, decisivo elevado).
 
-6. **Tabela `armors`**: Armazena informações sobre as armaduras disponíveis no jogo. Relaciona-se com a tabela `categoryArmors`.
+5. **Tabela `weapons`**: Armazena informações sobre as armas disponíveis no jogo.
 
-7. **Tabela `weaponClasses`**: Relacionamento entre classes e categorias de armas. Associa classes com categorias de armas.
+    - `id`: Identificador único da arma.
+    - `weapon`: Nome da arma.
+    - `proficiency`: Nível de proficiência necessária para usar a arma.
+    - `damage`: Dano da arma (ex: 1d6, 2d4).
+    - `rangeWeapon`: Alcance da arma.
+    - `numberOfHands`: Número de mãos necessárias para empunhar a arma.
+    - `category`: Referência à categoria da arma na tabela `categoryWeapons`.
 
-8. **Tabela `armorClasses`**: Relacionamento entre classes e categorias de armaduras. Associa classes com categorias de armaduras.
+6. **Tabela `armors`**: Armazena informações sobre as armaduras disponíveis no jogo.
 
-9. **Tabela `weaponProperties`**: Relacionamento entre armas e propriedades. Associa armas com propriedades específicas.
+    - `id`: Identificador único da armadura.
+    - `armor`: Nome da armadura.
+    - `ca`: Classe de armadura da peça.
+    - `penalty`: Penalidade na jogada (ex: penalidade de armadura).
+    - `displacement`: Deslocamento afetado pela armadura.
+    - `category`: Referência à categoria da armadura na tabela `categoryArmors`.
 
-10. **Tabela `artifactWeapons`**: Armazena informações sobre armas mágicas (artefatos). Relaciona-se com a tabela `weapons`.
+7. **Tabela `weaponClasses`**: Relacionamento entre classes e categorias de armas.
 
-11. **Tabela `artifactArmors`**: Armazena informações sobre armaduras mágicas (artefatos). Relaciona-se com a tabela `armors`.
+    - `id`: Identificador único da relação.
+    - `classId`: Referência à classe na tabela `classes`.
+    - `catWeaponId`: Referência à categoria de arma na tabela `categoryWeapons`.
+
+8. **Tabela `armorClasses`**: Relacionamento entre classes e categorias de armaduras.
+
+    - `id`: Identificador único da relação.
+    - `catArmorId`: Referência à categoria de armadura na tabela `categoryArmors`.
+    - `classId`: Referência à classe na tabela `classes`.
+
+9. **Tabela `weaponProperties`**: Relacionamento entre armas e propriedades.
+
+    - `id`: Identificador único da relação.
+    - `propertyId`: Referência à propriedade na tabela `properties`.
+    - `weaponId`: Referência à arma na tabela `weapons`.
+
+10. **Tabela `artifactWeapons`**: Armazena informações sobre armas mágicas (artefatos).
+
+    - `id`: Identificador único do artefato.
+    - `artifact`: Nome do artefato.
+    - `descWeapon`: Descrição do artefato.
+    - `typeWeapon`: Referência à arma na tabela `weapons`.
+    - `skill`: Habilidade especial do artefato.
+    - `price`: Valor do artefato.
+    - `weightWeapon`: Peso do artefato.
+    - `bonusAtk`: Bônus de ataque concedido pelo artefato.
+    - `bonusDamage`: Bônus de dano concedido pelo artefato.
+    - `registerDate`: Data de registro do artefato.
+
+11. **Tabela `artifactArmors`**: Armazena informações sobre armaduras mágicas (artefatos).
+
+    - `id`: Identificador único do artefato.
+    - `artifact`: Nome do artefato.
+    - `descArmor`: Descrição do artefato.
+    - `typeArmor`: Referência à armadura na tabela `armors`.
+    - `skill`: Habilidade especial do artefato.
+    - `price`: Valor do artefato.
+    - `weightArmor`: Peso do artefato.
+    - `bonusDefense`: Bônus de defesa concedido pelo artefato.
+    - `registerDate`: Data de registro do artefato.
 
 12. **Tabela `artifactItems`**: Armazena informações sobre itens mágicos (artefatos).
+
+    - `id`: Identificador único do artefato.
+    - `artifact`: Nome do artefato.
+    - `descItem`: Descrição do artefato.
+    - `skill`: Habilidade especial do artefato.
+    - `price`: Valor do artefato.
+    - `weightItem`: Peso do artefato.
+    - `bodySection`: Seção do corpo afetada pelo artefato.
+    - `registerDate`: Data de registro do artefato.
 
 **Autor:** Bruno Gabryell Cabral da Silva
 **Contato:** bruno.cabral.silva2018@gmail.com
