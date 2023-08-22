@@ -1,5 +1,3 @@
-<h1 align="center">Chronicles of Artifacts</h1>
-
 # Chronicles of Artifacts - Gerenciamento de Banco de Dados de RPG
 
 Seja bem-vindo ao Chronicles of Artifacts, uma aplicação Java poderosa que permite administrar um mundo de aventuras e equipamentos para jogos de RPG. Este projeto oferece uma solução abrangente para gerenciar classes de personagens, armas, armaduras e muito mais. Ele foi criado para demonstrar minhas habilidades em desenvolvimento de software e modelagem de banco de dados.
