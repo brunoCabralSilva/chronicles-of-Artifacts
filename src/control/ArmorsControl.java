@@ -1,9 +1,11 @@
-package armors;
+package control;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+
+import service.ArmorsService;
 
 public class ArmorsControl {
   ArmorsService armorsService = null;

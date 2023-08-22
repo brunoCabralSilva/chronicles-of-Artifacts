@@ -1,6 +1,6 @@
-import armors.ArmorsControl;
-import armors.ArmorsModel;
-import armors.ArmorsService;
+import control.ArmorsControl;
+import model.ArmorsModel;
+import service.ArmorsService;
 
 public class App {
   public static void main(String[] args) throws Exception {
