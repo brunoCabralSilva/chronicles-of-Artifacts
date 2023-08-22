@@ -27,7 +27,7 @@ O projeto Chronicles of Artifacts destaca várias tecnologias e habilidades que 
 
 - **Modelagem de Dados:** A modelagem de dados cuidadosa e bem planejada é evidente em todas as tabelas do banco de dados, mostrando minha competência em projetar estruturas complexas de banco de dados que representam com precisão as informações do mundo do RPG.
 
-- **Padrão MVC (Model-View-Controller):** A aplicação foi desenvolvida seguindo o padrão MVC, dividindo a lógica de negócios (Model), a apresentação (View) e o controle (Controller). Isso resultou em um código organizado e de fácil manutenção, tornando o projeto mais escalável e flexível.
+- **Padrão MSC (Model, Service, Controller):** Implementa o padrão de arquitetura MSC para separação clara de responsabilidades. Os Models representam as entidades do banco de dados, os Services contêm a lógica de negócios e os Controllers gerenciam as requisições e respostas da aplicação.
 
 - **Tratamento de Exceções:** A implementação de um tratamento de exceções robusto assegura a integridade dos dados e a estabilidade da aplicação mesmo em situações de erro, demonstrando minha atenção aos detalhes e à qualidade do software.
 
