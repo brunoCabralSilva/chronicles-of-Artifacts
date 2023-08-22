@@ -1,27 +1,27 @@
 import control.ArtArmorsControl;
 import control.ArtWeaponsControl;
-import model.ArtArmorsModel;
-import model.ArtItemsModel;
-import model.ArtWeaponsModel;
-import service.ArtArmorsService;
-import service.ArtItemsService;
-import service.ArtWeaponsService;
+// import model.ArtArmorsModel;
+// import model.ArtItemsModel;
+// import model.ArtWeaponsModel;
+// import service.ArtArmorsService;
+// import service.ArtItemsService;
+// import service.ArtWeaponsService;
 
 public class App {
   public static void main(String[] args) throws Exception {
     
-    // java.util.Date utilDate = new java.util.Date();
-    // java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
+    java.util.Date utilDate = new java.util.Date();
+    java.sql.Date sqlDate = new java.sql.Date(utilDate.getTime());
     
     ArtWeaponsControl artWeaponsControl = new ArtWeaponsControl();
     artWeaponsControl.getArtifact();
-    // artWeaponsControl.insertArtifact("Espada do Fogo", "Espada de Fogo vinda do quinto dos infernos", "Concede uma ação a mais caso seja ferido por fogo", "1d4 de dano flamejante", "+2", 5000, 10, "espada curta", sqlDate);
+    // artWeaponsControl.insertArtifact("Arco do fogo Sagrado", "Espada de Fogo vinda do quinto dos infernos", "Concede uma ação a mais caso seja ferido por fogo", "1d4 de dano flamejante", "+2", 5000, 10, "Arco curto", sqlDate);
     // artWeaponsControl.updateArtifact(6, "Espada do Fogo", "Espada de Fogo vinda do quinto dos infernos", "Concede uma ação a mais caso seja ferido por fogo", "1d4 de dano flamejante", "+2", 5000, 10, "azagaia", sqlDate);
-    // artWeaponsControl.removeArtifact("Espada do Fogo");
+    // artWeaponsControl.removeArtifact("Arco do fogo Sagrado");
     
-    ArtArmorsControl artArmorsControl = new ArtArmorsControl();
+    // ArtArmorsControl artArmorsControl = new ArtArmorsControl();
 
-    artArmorsControl.getArtifact();
+    // artArmorsControl.getArtifact();
     // artArmorsControl.insertArtifact(
     //   "Escudo do Dragão negro",
     //   "Escudo forjado no estômago de um dragão negro",
