@@ -18,7 +18,7 @@ public class WeaponsModel {
   private Connection connection;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
-  WeaponPropertiesModel weaponsPropertiesModel;
+  private WeaponPropertiesModel weaponsPropertiesModel;
 
   public WeaponsModel() {
     this.connection = null;
@@ -79,7 +79,6 @@ public class WeaponsModel {
         this.prepStatement.setString(1, this.resultSet.getString("category"));
         ResultSet categoryWeapon = this.prepStatement.executeQuery();
         categoryWeapon.next();
-       
         TreeMap<String, Object> weaponMap = new TreeMap<>();
         weaponMap.put("id", this.resultSet.getInt("id"));
         weaponMap.put("weapon", this.resultSet.getString("weapon"));

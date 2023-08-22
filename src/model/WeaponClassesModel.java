@@ -23,6 +23,38 @@ public class WeaponClassesModel {
     this.prepStatement = null;
   }
 
+  public ArrayList<String> getClassesByWeapon(String weapon) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      this.prepStatement = this.connection.prepareStatement(
+        "SELECT c.nameClass "
+        + "FROM classes c "
+        + "INNER JOIN weaponClasses wc "
+        + "ON c.id = wc.classId "
+        + "INNER JOIN categoryWeapons cat "
+        + "ON wc.catWeaponId = cat.id "
+        + "INNER JOIN weapons w "
+        + "ON cat.id = w.category "
+        + "WHERE w.weapon = ?;",
+        Statement.RETURN_GENERATED_KEYS
+      );
+
+      this.prepStatement.setString(1, weapon);
+      this.resultSet = this.prepStatement.executeQuery();
+
+      ArrayList<String> allClasses = new ArrayList<String>();
+
+      while(this.resultSet.next()) {
+        allClasses.add(this.resultSet.getString("nameClass"));
+      }
+
+      return allClasses;
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  };
+
   public ArrayList<String> getCatWeaponByClass(String className) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();

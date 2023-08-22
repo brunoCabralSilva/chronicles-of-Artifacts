@@ -20,12 +20,14 @@ public class ArtArmorsModel {
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
   private ArmorsModel armorsModel;
+  private ArmorClassesModel armorClassesModel;
 
   public ArtArmorsModel() {
     this.connection = null;
     this.resultSet = null;
     this.prepStatement = null;
     this.armorsModel = new ArmorsModel();
+    this.armorClassesModel = new ArmorClassesModel();
   }
 
   public ArrayList<Map<String, Object>> getArtifact(Object data) throws FileNotFoundException, IOException {
@@ -51,6 +53,7 @@ public class ArtArmorsModel {
 
       while (this.resultSet.next()) {
         ArrayList<Map<String, Object>> armor = this.armorsModel.getArmors(this.resultSet.getInt("typearmor"));
+        ArrayList<String> classes = this.armorClassesModel.getClassesByArmor((String) armor.get(0).get("armor"));
         TreeMap<String, Object> line = new TreeMap<String, Object>();
         line.put("id", this.resultSet.getInt("id"));
         line.put("artifact", this.resultSet.getString("artifact"));
@@ -60,6 +63,7 @@ public class ArtArmorsModel {
         line.put("price", this.resultSet.getDouble("price"));
         line.put("weightArmor", this.resultSet.getDouble("weightArmor"));
         line.put("typeArmor", armor.get(0).get("armor"));
+        line.put("classes", classes);
         line.put("registerDate", this.resultSet.getDate("registerDate"));
         listArtifacts.add(line);
       }

@@ -90,6 +90,38 @@ public class ArmorClassesModel {
     }
   }
 
+  public ArrayList<String> getClassesByArmor(String armor) throws FileNotFoundException, IOException {
+    try {
+      this.connection = ConnectionDB.getConnection();
+      this.prepStatement = this.connection.prepareStatement(
+        "SELECT c.nameClass "
+        + "FROM classes c "
+        + "INNER JOIN armorClasses ac "
+        + "ON c.id = ac.classId "
+        + "INNER JOIN categoryArmors cat "
+        + "ON ac.catArmorId = cat.id "
+        + "INNER JOIN armors a "
+        + "ON cat.id = a.category "
+        + "WHERE a.armor = ?;",
+        Statement.RETURN_GENERATED_KEYS
+      );
+
+      this.prepStatement.setString(1, armor);
+      this.resultSet = this.prepStatement.executeQuery();
+
+      ArrayList<String> allClasses = new ArrayList<String>();
+
+      while(this.resultSet.next()) {
+        allClasses.add(this.resultSet.getString("nameClass"));
+      }
+
+      return allClasses;
+    } catch (SQLException e) {
+      ConnectionDB.rollbackFunction(this.connection);
+      throw new DBException(e.getMessage());
+    }
+  };
+
   public void insertArmorClass(ArrayList<String> armors, int classId) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
