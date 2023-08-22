@@ -79,7 +79,7 @@ public class CatArmorsModel {
       throw new DBException(e.getMessage());
     }
   };
-
+  
   public boolean insertCatArmor(
     String typeArmor,
     String categoryArmor

@@ -13,16 +13,15 @@ import java.util.TreeMap;
 
 import connection.ConnectionDB;
 import connection.DBException;
+import model.CatArmorsModel;
 
 public class ArmorsModel {
   private Connection connection;
-  private Statement statement;
   private ResultSet resultSet;
   private PreparedStatement prepStatement;
 
   public ArmorsModel() {
     this.connection = null;
-    this.statement = null;
     this.resultSet = null;
     this.prepStatement = null;
   }
@@ -30,9 +29,8 @@ public class ArmorsModel {
   public ArrayList<Map<String, Object>> getArmors(Object data) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
-      this.statement = this.connection.createStatement();
       if (data == "all") {
-        this.resultSet = this.statement.executeQuery(
+        this.prepStatement = this.connection.prepareStatement(
           "SELECT * FROM chroniclesOfArtifacts.armors"
         );
       } else if (!data.getClass().getSimpleName().equals("String")) {
@@ -50,15 +48,22 @@ public class ArmorsModel {
       ArrayList<Map<String, Object>> armorMap = new ArrayList<Map<String, Object>>();
       while (this.resultSet.next()) {
         TreeMap<String, Object> line = new TreeMap<String, Object>();
-        line.put("id", this.resultSet.getString(1));
+        this.prepStatement = this.connection.prepareStatement(
+          "SELECT categoryArmor, typeArmor FROM chroniclesOfArtifacts.categoryArmors WHERE id = ?"
+        );
+        this.prepStatement.setInt(1, this.resultSet.getInt(6));
+        ResultSet result = this.prepStatement.executeQuery();
+        result.next();
+        line.put("id", this.resultSet.getInt(1));
         line.put("armor", this.resultSet.getString(2));
-        line.put("ca", this.resultSet.getString(3));
-        line.put("penalty", this.resultSet.getString(4));
-        line.put("displacement", this.resultSet.getString(5));
-        line.put("category", this.resultSet.getString(6));
-        return armorMap;
+        line.put("ca", this.resultSet.getInt(3));
+        line.put("penalty", this.resultSet.getInt(4));
+        line.put("displacement", this.resultSet.getInt(5));
+        line.put("type", result.getString(2));
+        line.put("category", result.getString(1));
+        armorMap.add(line);
       }
-      return null;
+      return armorMap;
     } catch (SQLException e) {
       throw new DBException(e.getMessage());
     }
@@ -69,11 +74,17 @@ public class ArmorsModel {
     int ca,
     int penalty,
     int displacement,
-    int category
+    String type
   ) throws FileNotFoundException, IOException {
     try {
       this.connection = ConnectionDB.getConnection();
       this.connection.setAutoCommit(false);
+      CatArmorsModel catArmorsModel = new CatArmorsModel();
+      ArrayList<Map<String, Object>> idCategoryArmor = catArmorsModel.getCatArmors(type);
+
+      if (catArmorsModel.getCatArmors(type).size() == 0) {
+        throw new DBException("Categoria de Armadura não foi encontrada");
+      }
       this.prepStatement = this.connection.prepareStatement(
         "INSERT INTO chroniclesOfArtifacts.armors "
         + "(armor, ca, penalty, displacement, category) "
@@ -84,7 +95,7 @@ public class ArmorsModel {
       this.prepStatement.setInt(2, ca);
       this.prepStatement.setInt(3, penalty);
       this.prepStatement.setInt(4, displacement);
-      this.prepStatement.setInt(5, category);
+      this.prepStatement.setInt(5, (int) idCategoryArmor.get(0).get("id"));
       this.prepStatement.executeUpdate();
       this.resultSet = this.prepStatement.getGeneratedKeys();
       this.connection.commit();
@@ -102,11 +113,17 @@ public class ArmorsModel {
     int ca,
     int penalty,
     int displacement,
-    int category
+    String type
   ) throws FileNotFoundException, IOException {
-    this.connection = ConnectionDB.getConnection();
     try {
+      this.connection = ConnectionDB.getConnection();
       this.connection.setAutoCommit(false); 
+      CatArmorsModel catArmorsModel = new CatArmorsModel();
+      ArrayList<Map<String, Object>> idCategoryArmor = catArmorsModel.getCatArmors(type);
+
+      if (catArmorsModel.getCatArmors(type).size() == 0) {
+        throw new DBException("Categoria de Armadura não foi encontrada");
+      }
       this.prepStatement = this.connection.prepareStatement(
         "UPDATE chroniclesOfArtifacts.armors "
         + "SET armor = ?, ca = ?, penalty = ?, displacement = ?, category = ?"
@@ -117,7 +134,7 @@ public class ArmorsModel {
       this.prepStatement.setInt(2, ca);
       this.prepStatement.setInt(3, penalty);
       this.prepStatement.setInt(4, displacement);
-      this.prepStatement.setInt(5, category);
+      this.prepStatement.setInt(5, (int) idCategoryArmor.get(0).get("id"));
       this.prepStatement.setInt(6, id);
       this.prepStatement.executeUpdate();
       this.connection.commit();

@@ -24,15 +24,17 @@ public class ArmorsControl {
         + "ID: "
         + listArmors.get(i).get("id")
         + "\nArmadura: "
-        + this.firstLetterUp(listArmors.get(i).get("armor"))
+        + this.firstLetterUp((String) listArmors.get(i).get("armor"))
         + "\nBônus de CA: "
         + listArmors.get(i).get("ca")
         + "\nPenalidade: "
         + listArmors.get(i).get("penalty")
         + "\nDeslocamento: "
         + listArmors.get(i).get("displacement")
+        + "\nTipo: "
+        + this.firstLetterUp((String) listArmors.get(i).get("type"))
         + "\nCategoria: "
-        + listArmors.get(i).get("category")
+        + this.firstLetterUp((String) listArmors.get(i).get("category"))
         + "\n"
       );
       i += 1;
@@ -53,14 +55,14 @@ public class ArmorsControl {
     int ca,
     int penalty,
     int displacement,
-    int category
+    String type
   ) throws FileNotFoundException, IOException {
     ArrayList<Map<String, Object>> insertedArmor = this.armorsService.insertArmor(
       armor,
       ca,
       penalty,
       displacement,
-      category
+      type
     );
     if (insertedArmor.size() == 0) {
       System.out.println(
@@ -84,7 +86,7 @@ public class ArmorsControl {
     int ca,
     int penalty,
     int displacement,
-    int category
+    String type
   ) throws FileNotFoundException, IOException {
     ArrayList<Map<String, Object>> updatedArmor = this.armorsService.updateArmor(
       id,
@@ -92,7 +94,7 @@ public class ArmorsControl {
       ca,
       penalty,
       displacement,
-      category
+      type
     );
     if (updatedArmor.size() == 0) { 
       System.out.println("\nA armadura de id " + id + " não foi encontrada na base de dados!\n");
