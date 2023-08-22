@@ -127,5 +127,8 @@ A seguir, a descrição das tabelas presentes no banco de dados e como elas se r
     - `bodySection`: Seção do corpo afetada pelo artefato.
     - `registerDate`: Data de registro do artefato.
 
+
 **Autor:** Bruno Gabryell Cabral da Silva
+
 **Contato:** bruno.cabral.silva2018@gmail.com
+
