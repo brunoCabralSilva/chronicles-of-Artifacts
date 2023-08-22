@@ -15,14 +15,21 @@ Seja bem-vindo ao Chronicles of Artifacts, uma aplicação Java poderosa que per
 2. **Exploração:** Use a aplicação para explorar as classes, armas, armaduras e propriedades disponíveis. Personalize e crie combinações únicas para seus personagens.
 3. **Artefatos:** Descubra os artefatos mágicos mais poderosos do mundo do RPG. Cada um deles traz consigo uma história fascinante e habilidades excepcionais.
 
-## Tecnologias Demonstradas
+# Tecnologias Demonstradas
 
-- **Java:** O projeto é desenvolvido em Java, demonstrando minhas habilidades de programação orientada a objetos e manipulação de bancos de dados.
-- **MySQL:** Utiliza o MySQL como banco de dados relacional para armazenar e gerenciar todas as informações do mundo do RPG.
-- **Modelagem de Dados:** Apresenta uma modelagem de dados cuidadosa e bem planejada, destacando minha habilidade em projetar estruturas complexas de banco de dados.
-- **Tratamento de Exceções:** Implementa um tratamento robusto de exceções para garantir a integridade dos dados e a estabilidade da aplicação.
+O projeto Chronicles of Artifacts destaca várias tecnologias e habilidades que foram aplicadas para criar uma solução robusta para gerenciamento de um mundo de RPG:
 
-Sinta-se à vontade para explorar o projeto, contribuir e usá-lo como inspiração para suas próprias aventuras no mundo dos jogos de RPG.
+- **Java:** A aplicação é desenvolvida em Java, destacando minha proficiência em programação orientada a objetos e práticas de desenvolvimento em uma linguagem amplamente utilizada na indústria.
+
+- **MySQL:** Utiliza o MySQL como sistema de gerenciamento de banco de dados relacional, demonstrando minha capacidade de projetar, criar e manipular bancos de dados eficientemente.
+
+- **JDBC (Java Database Connectivity):** O projeto utiliza o JDBC para realizar a conexão e interação com o banco de dados MySQL. Isso mostra minha habilidade em integrar aplicações Java com sistemas de banco de dados por meio do JDBC, permitindo operações de leitura e escrita nos dados.
+
+- **Modelagem de Dados:** A modelagem de dados cuidadosa e bem planejada é evidente em todas as tabelas do banco de dados, mostrando minha competência em projetar estruturas complexas de banco de dados que representam com precisão as informações do mundo do RPG.
+
+- **Tratamento de Exceções:** A implementação de um tratamento de exceções robusto assegura a integridade dos dados e a estabilidade da aplicação mesmo em situações de erro, demonstrando minha atenção aos detalhes e à qualidade do software.
+
+Essas tecnologias em conjunto formam a base sólida do Chronicles of Artifacts e destacam minhas habilidades em desenvolvimento de software e gerenciamento de bancos de dados.
 
 ## Relacionamentos do Banco de Dados Chronicles of Artifacts
 
@@ -129,6 +136,5 @@ A seguir, a descrição das tabelas presentes no banco de dados e como elas se r
 
 
 **Autor:** Bruno Gabryell Cabral da Silva
-
 **Contato:** bruno.cabral.silva2018@gmail.com
 
